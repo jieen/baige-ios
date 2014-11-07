@@ -46,19 +46,22 @@ class Login : UIViewController {
             alertView.show()
             return
         }
-        if(HttpUtils().checkLogin(tfUserName.text,passwd: tfPassWord.text))
-        {
-            println("login success")
-            //跳转到登录成功界面
-            self.performSegueWithIdentifier("loginSuccess", sender: self)
-        }
-        else
-        {
-            //登录失败
-            var alertView: UIAlertView = UIAlertView(title: "登录失败", message: "用户名或者密码错误", delegate: nil, cancelButtonTitle: "确定")
-            alertView.show()
-            return
-        }
+        
+        HttpUtils().checkLoginAsync(tfUserName.text, passwd: tfPassWord.text)
+//        //同步
+//        if(HttpUtils().checkLoginSync(tfUserName.text,passwd: tfPassWord.text))
+//        {
+//            println("login success")
+//            //跳转到登录成功界面
+//            self.performSegueWithIdentifier("loginSuccess", sender: self)
+//        }
+//        else
+//        {
+//            //登录失败
+//            var alertView: UIAlertView = UIAlertView(title: "登录失败", message: "用户名或者密码错误", delegate: nil, cancelButtonTitle: "确定")
+//            alertView.show()
+//            return
+//        }
         
     }
 }

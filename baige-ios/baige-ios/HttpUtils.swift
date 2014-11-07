@@ -10,40 +10,13 @@ import Foundation
 import UiKit
 import Alamofire
 
-
-/*
-/**
-//http get 的使用例子
-HttpUtils().creteRequest("http://localhost:8080/userinfo",type:"GET",params:nil,completion:
-{
-(returnedObject:AnyObject?,error:NSError?) in
-if returnedObject{
-println("data = \(returnedObject)")
-}
-})
-//http post 的使用例子
-HttpUtils().createRequest("http://localhost:8080/login",type:"POST",params:["key","value"],completion:
-{(returnObject:AnyObject?,error:NSError?) in
-if returnedObject{
-println("data = \(returnObject)")
-}
-}
-)
-**/
-
-
-
-*/
-
-
 var userid="0"
 var sessionid="0"
+
+
 class HttpUtils{
     var ServerUrl = "http://10.0.16.246:8080"
-//    var ServerUrl = "http://10.0.17.189"
-//    class let userid:String
-//    class let sessionid:String
-    
+//    var ServerUrl = "http://10.0.17.189"    
     
     /**
         冒号和逗号转换
@@ -58,6 +31,47 @@ class HttpUtils{
         return base + tmpStr!
     }
     
+    //异步post
+    func PostJSONDataAsync(myUrl:String,rawData:AnyObject)->(){
+        var url = NSURL(string : myUrl)
+        let request = NSMutableURLRequest(URL: url!)
+        println("sessionID is \(sessionid)")
+        request.setValue("sessionid=" + sessionid,forHTTPHeaderField: "Cookie")
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.HTTPMethod = "POST"
+        var data = rawData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion:true)
+        println(data)
+        request.HTTPBody = data
+        
+        NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue(), completionHandler: {
+                response,data,error in
+                var errMsg = " "
+                if (error != nil){
+                    println("\(error)")
+                }else
+                {
+                    var json:AnyObject! = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
+                    var errCode: AnyObject? = json.objectForKey("errorcode")
+                    errMsg = json.objectForKey("errormsg") as String
+                    println("errCode: \(errCode) errMsg: \(errMsg)")
+                    if(errCode == nil || errMsg.isEmpty){
+                        return
+                    }
+                    if(errCode?.intValue == 0){
+                        println("login success")
+                        
+                    }else
+                    {
+                        println("login failed")
+                    }
+                }
+                //刷新主界面
+                dispatch_async(dispatch_get_main_queue(), {
+                    var alertDialog = UIAlertView(title: "提示", message: errMsg, delegate: nil, cancelButtonTitle: "OK")
+                    alertDialog.show()
+                })
+            })
+        }
     /*
         POST 原始数据
     */
@@ -72,62 +86,21 @@ class HttpUtils{
         println(data)
         request.HTTPBody = data
         var respose:NSData!
-//        var response:AutoreleasingUnsafeMutablePointer<NSURLResponse?> = nil
-        if(true == true)
-        {
         //同步
-        respose = NSURLConnection.sendSynchronousRequest(request, returningResponse: nil, error: nil)!
-        //异步数据处理
-        }else
-        {
-            NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue(), completionHandler: {
-                response,data,error in
-                if (error != nil){
-                    println("\(error)")
-                }else
-                {
-                    var json:AnyObject! = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
-                    var errCode: AnyObject? = json.objectForKey("errorcode")
-                    var errMsg:AnyObject? = json.objectForKey("errormsg")
-                    println("errCode: \(errCode) errMsg: \(errMsg)")
-                    if(errCode == nil || errMsg == nil){
-                        return
-                    }
-                    if(errCode as Int == 0){
-                        println("login success")
-                    
-                    }else
-                    {
-//                      ret = false
-                    }
-                }
-                //刷新主界面
-                dispatch_async(dispatch_get_main_queue(), {
-                
-                })
-            })
-        }
-        
-        
-        
-        
-        var storage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
-        var cookie = NSHTTPCookieStorage.cookiesForURL(storage)(NSURL(string:myUrl)!)
-        println(cookie)
-        storage.setCookies(cookie!, forURL: NSURL(string:myUrl), mainDocumentURL: nil)
-        return respose
+            respose = NSURLConnection.sendSynchronousRequest(request, returningResponse: nil, error: nil)!
+            return respose
     }
-    
-//    func createStr(oriStr : Dictionary<String, AnyObject>)->NSString{
-//        
-//        var jsonPost = JsonPostData()
-//        jsonPost.errormsg = "0"
-//        jsonPost.errorcode = "0"
-//        jsonPost.data = oriStr
-//        return "OK"
-//    }
+    func checkLoginAsync(user:String,passwd:String)->(){
+        println("user is \(user) and passwd is \(passwd)")
+        var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uname\":\"\(user)\",\"pwd\":\"\(passwd)\"}}"
+        var baseStr:String = "content="
+        var rawDataStr = urlEncode(baseStr,oriString: dataIn)
+        //println(rawDataStr)
+        println("SESSIONID: "+sessionid)
+        PostJSONDataAsync(ServerUrl+"/tipsbar/login/",rawData: rawDataStr)
+    }
     //登录处理
-    func checkLogin(user:String,passwd:String)->Bool{
+    func checkLoginSync(user:String,passwd:String)->Bool{
         println("user is \(user) and passwd is \(passwd)")
         var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uname\":\"\(user)\",\"pwd\":\"\(passwd)\"}}"
         var baseStr:String = "content="
@@ -139,13 +112,8 @@ class HttpUtils{
         {
             return false
         }
-        
         var storage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
         var cookie = NSHTTPCookieStorage.cookiesForURL(storage)(NSURL(string:ServerUrl+"/tipsbar/login/")!) as [NSHTTPCookie]
-//        println("Second cookie: \(cookie)")
-//        println()
-//        println()
-//        println()
         for cokie in cookie{
 //            println(cokie.name+" : "+cokie.value!)
             sessionid = cokie.value!
