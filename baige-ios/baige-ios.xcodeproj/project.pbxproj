@@ -9,11 +9,17 @@
 /* Begin PBXBuildFile section */
 		529888861A0C65350075C6EC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529888851A0C65350075C6EC /* AppDelegate.swift */; };
 		529888891A0C65350075C6EC /* baige_ios.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 529888871A0C65350075C6EC /* baige_ios.xcdatamodeld */; };
-		5298888B1A0C65350075C6EC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5298888A1A0C65350075C6EC /* ViewController.swift */; };
 		5298888E1A0C65350075C6EC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5298888C1A0C65350075C6EC /* Main.storyboard */; };
 		529888901A0C65350075C6EC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5298888F1A0C65350075C6EC /* Images.xcassets */; };
 		529888931A0C65350075C6EC /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 529888911A0C65350075C6EC /* LaunchScreen.xib */; };
 		5298889F1A0C65350075C6EC /* baige_iosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5298889E1A0C65350075C6EC /* baige_iosTests.swift */; };
+		529888BD1A0C68640075C6EC /* HttpUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529888BC1A0C68640075C6EC /* HttpUtils.swift */; };
+		529888BF1A0C687E0075C6EC /* Extens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529888BE1A0C687E0075C6EC /* Extens.swift */; };
+		529888C51A0C68DE0075C6EC /* JsonUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529888C21A0C68DE0075C6EC /* JsonUtils.swift */; };
+		529888C61A0C68DE0075C6EC /* LoginSuccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529888C31A0C68DE0075C6EC /* LoginSuccess.swift */; };
+		529888C71A0C68DE0075C6EC /* UserReg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529888C41A0C68DE0075C6EC /* UserReg.swift */; };
+		529888C91A0C6E900075C6EC /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529888C81A0C6E900075C6EC /* Login.swift */; };
+		529888CB1A0C7A3E0075C6EC /* AFHttpUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529888CA1A0C7A3E0075C6EC /* AFHttpUtils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,6 +30,27 @@
 			remoteGlobalIDString = 5298887F1A0C65350075C6EC;
 			remoteInfo = "baige-ios";
 		};
+		529888B61A0C67880075C6EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 529888A91A0C66DF0075C6EC /* Alamofire.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F8111E3319A95C8B0040E7D1;
+			remoteInfo = Alamofire;
+		};
+		529888B81A0C67880075C6EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 529888A91A0C66DF0075C6EC /* Alamofire.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F8111E3E19A95C8B0040E7D1;
+			remoteInfo = AlamofireTests;
+		};
+		529888BA1A0C67F20075C6EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 529888A91A0C66DF0075C6EC /* Alamofire.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F8111E3219A95C8B0040E7D1;
+			remoteInfo = Alamofire;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -31,13 +58,20 @@
 		529888841A0C65350075C6EC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		529888851A0C65350075C6EC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		529888881A0C65350075C6EC /* baige_ios.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = baige_ios.xcdatamodel; sourceTree = "<group>"; };
-		5298888A1A0C65350075C6EC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5298888D1A0C65350075C6EC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5298888F1A0C65350075C6EC /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		529888921A0C65350075C6EC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		529888981A0C65350075C6EC /* baige-iosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "baige-iosTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5298889D1A0C65350075C6EC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5298889E1A0C65350075C6EC /* baige_iosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = baige_iosTests.swift; sourceTree = "<group>"; };
+		529888A91A0C66DF0075C6EC /* Alamofire.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Alamofire.xcodeproj; path = ../../Alamofire/Alamofire.xcodeproj; sourceTree = "<group>"; };
+		529888BC1A0C68640075C6EC /* HttpUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HttpUtils.swift; path = ../../../../../Desktop/dd/HttpUtils.swift; sourceTree = "<group>"; };
+		529888BE1A0C687E0075C6EC /* Extens.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extens.swift; path = ../../../../../Desktop/dd/Extens.swift; sourceTree = "<group>"; };
+		529888C21A0C68DE0075C6EC /* JsonUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JsonUtils.swift; path = ../../../../../Desktop/dd/JsonUtils.swift; sourceTree = "<group>"; };
+		529888C31A0C68DE0075C6EC /* LoginSuccess.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoginSuccess.swift; path = ../../../../../Desktop/dd/LoginSuccess.swift; sourceTree = "<group>"; };
+		529888C41A0C68DE0075C6EC /* UserReg.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserReg.swift; path = ../../../../../Desktop/dd/UserReg.swift; sourceTree = "<group>"; };
+		529888C81A0C6E900075C6EC /* Login.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
+		529888CA1A0C7A3E0075C6EC /* AFHttpUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AFHttpUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +95,7 @@
 		529888771A0C65350075C6EC = {
 			isa = PBXGroup;
 			children = (
+				529888A91A0C66DF0075C6EC /* Alamofire.xcodeproj */,
 				529888821A0C65350075C6EC /* baige-ios */,
 				5298889B1A0C65350075C6EC /* baige-iosTests */,
 				529888811A0C65350075C6EC /* Products */,
@@ -79,13 +114,19 @@
 		529888821A0C65350075C6EC /* baige-ios */ = {
 			isa = PBXGroup;
 			children = (
+				529888C81A0C6E900075C6EC /* Login.swift */,
+				529888C21A0C68DE0075C6EC /* JsonUtils.swift */,
+				529888C31A0C68DE0075C6EC /* LoginSuccess.swift */,
+				529888C41A0C68DE0075C6EC /* UserReg.swift */,
+				529888BE1A0C687E0075C6EC /* Extens.swift */,
+				529888BC1A0C68640075C6EC /* HttpUtils.swift */,
 				529888851A0C65350075C6EC /* AppDelegate.swift */,
-				5298888A1A0C65350075C6EC /* ViewController.swift */,
 				5298888C1A0C65350075C6EC /* Main.storyboard */,
 				5298888F1A0C65350075C6EC /* Images.xcassets */,
 				529888911A0C65350075C6EC /* LaunchScreen.xib */,
 				529888871A0C65350075C6EC /* baige_ios.xcdatamodeld */,
 				529888831A0C65350075C6EC /* Supporting Files */,
+				529888CA1A0C7A3E0075C6EC /* AFHttpUtils.swift */,
 			);
 			path = "baige-ios";
 			sourceTree = "<group>";
@@ -115,6 +156,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		529888B21A0C67880075C6EC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				529888B71A0C67880075C6EC /* Alamofire.framework */,
+				529888B91A0C67880075C6EC /* AlamofireTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -129,6 +179,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				529888BB1A0C67F20075C6EC /* PBXTargetDependency */,
 			);
 			name = "baige-ios";
 			productName = "baige-ios";
@@ -182,6 +233,12 @@
 			mainGroup = 529888771A0C65350075C6EC;
 			productRefGroup = 529888811A0C65350075C6EC /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 529888B21A0C67880075C6EC /* Products */;
+					ProjectRef = 529888A91A0C66DF0075C6EC /* Alamofire.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				5298887F1A0C65350075C6EC /* baige-ios */,
@@ -189,6 +246,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		529888B71A0C67880075C6EC /* Alamofire.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Alamofire.framework;
+			remoteRef = 529888B61A0C67880075C6EC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		529888B91A0C67880075C6EC /* AlamofireTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AlamofireTests.xctest;
+			remoteRef = 529888B81A0C67880075C6EC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		5298887E1A0C65350075C6EC /* Resources */ = {
@@ -215,9 +289,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5298888B1A0C65350075C6EC /* ViewController.swift in Sources */,
+				529888C61A0C68DE0075C6EC /* LoginSuccess.swift in Sources */,
+				529888BF1A0C687E0075C6EC /* Extens.swift in Sources */,
 				529888891A0C65350075C6EC /* baige_ios.xcdatamodeld in Sources */,
 				529888861A0C65350075C6EC /* AppDelegate.swift in Sources */,
+				529888C71A0C68DE0075C6EC /* UserReg.swift in Sources */,
+				529888C91A0C6E900075C6EC /* Login.swift in Sources */,
+				529888CB1A0C7A3E0075C6EC /* AFHttpUtils.swift in Sources */,
+				529888BD1A0C68640075C6EC /* HttpUtils.swift in Sources */,
+				529888C51A0C68DE0075C6EC /* JsonUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +316,11 @@
 			isa = PBXTargetDependency;
 			target = 5298887F1A0C65350075C6EC /* baige-ios */;
 			targetProxy = 529888991A0C65350075C6EC /* PBXContainerItemProxy */;
+		};
+		529888BB1A0C67F20075C6EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Alamofire;
+			targetProxy = 529888BA1A0C67F20075C6EC /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -409,6 +494,7 @@
 				529888A41A0C65350075C6EC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		529888A51A0C65350075C6EC /* Build configuration list for PBXNativeTarget "baige-iosTests" */ = {
 			isa = XCConfigurationList;
@@ -417,6 +503,7 @@
 				529888A71A0C65350075C6EC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
