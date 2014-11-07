@@ -25,7 +25,7 @@ class Login : UIViewController {
         super.didReceiveMemoryWarning()
     }
     @IBAction func tfChanged(sender: AnyObject) {
-        println("Text Filed Changed")
+//        println("Text Filed Changed")
         
     }
     
