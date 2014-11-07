@@ -1,0 +1,437 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		529888861A0C65350075C6EC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 529888851A0C65350075C6EC /* AppDelegate.swift */; };
+		529888891A0C65350075C6EC /* baige_ios.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 529888871A0C65350075C6EC /* baige_ios.xcdatamodeld */; };
+		5298888B1A0C65350075C6EC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5298888A1A0C65350075C6EC /* ViewController.swift */; };
+		5298888E1A0C65350075C6EC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5298888C1A0C65350075C6EC /* Main.storyboard */; };
+		529888901A0C65350075C6EC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5298888F1A0C65350075C6EC /* Images.xcassets */; };
+		529888931A0C65350075C6EC /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 529888911A0C65350075C6EC /* LaunchScreen.xib */; };
+		5298889F1A0C65350075C6EC /* baige_iosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5298889E1A0C65350075C6EC /* baige_iosTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		529888991A0C65350075C6EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 529888781A0C65350075C6EC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5298887F1A0C65350075C6EC;
+			remoteInfo = "baige-ios";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		529888801A0C65350075C6EC /* baige-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "baige-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		529888841A0C65350075C6EC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		529888851A0C65350075C6EC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		529888881A0C65350075C6EC /* baige_ios.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = baige_ios.xcdatamodel; sourceTree = "<group>"; };
+		5298888A1A0C65350075C6EC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		5298888D1A0C65350075C6EC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		5298888F1A0C65350075C6EC /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		529888921A0C65350075C6EC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		529888981A0C65350075C6EC /* baige-iosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "baige-iosTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5298889D1A0C65350075C6EC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5298889E1A0C65350075C6EC /* baige_iosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = baige_iosTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5298887D1A0C65350075C6EC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		529888951A0C65350075C6EC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		529888771A0C65350075C6EC = {
+			isa = PBXGroup;
+			children = (
+				529888821A0C65350075C6EC /* baige-ios */,
+				5298889B1A0C65350075C6EC /* baige-iosTests */,
+				529888811A0C65350075C6EC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		529888811A0C65350075C6EC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				529888801A0C65350075C6EC /* baige-ios.app */,
+				529888981A0C65350075C6EC /* baige-iosTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		529888821A0C65350075C6EC /* baige-ios */ = {
+			isa = PBXGroup;
+			children = (
+				529888851A0C65350075C6EC /* AppDelegate.swift */,
+				5298888A1A0C65350075C6EC /* ViewController.swift */,
+				5298888C1A0C65350075C6EC /* Main.storyboard */,
+				5298888F1A0C65350075C6EC /* Images.xcassets */,
+				529888911A0C65350075C6EC /* LaunchScreen.xib */,
+				529888871A0C65350075C6EC /* baige_ios.xcdatamodeld */,
+				529888831A0C65350075C6EC /* Supporting Files */,
+			);
+			path = "baige-ios";
+			sourceTree = "<group>";
+		};
+		529888831A0C65350075C6EC /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				529888841A0C65350075C6EC /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5298889B1A0C65350075C6EC /* baige-iosTests */ = {
+			isa = PBXGroup;
+			children = (
+				5298889E1A0C65350075C6EC /* baige_iosTests.swift */,
+				5298889C1A0C65350075C6EC /* Supporting Files */,
+			);
+			path = "baige-iosTests";
+			sourceTree = "<group>";
+		};
+		5298889C1A0C65350075C6EC /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5298889D1A0C65350075C6EC /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5298887F1A0C65350075C6EC /* baige-ios */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 529888A21A0C65350075C6EC /* Build configuration list for PBXNativeTarget "baige-ios" */;
+			buildPhases = (
+				5298887C1A0C65350075C6EC /* Sources */,
+				5298887D1A0C65350075C6EC /* Frameworks */,
+				5298887E1A0C65350075C6EC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "baige-ios";
+			productName = "baige-ios";
+			productReference = 529888801A0C65350075C6EC /* baige-ios.app */;
+			productType = "com.apple.product-type.application";
+		};
+		529888971A0C65350075C6EC /* baige-iosTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 529888A51A0C65350075C6EC /* Build configuration list for PBXNativeTarget "baige-iosTests" */;
+			buildPhases = (
+				529888941A0C65350075C6EC /* Sources */,
+				529888951A0C65350075C6EC /* Frameworks */,
+				529888961A0C65350075C6EC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5298889A1A0C65350075C6EC /* PBXTargetDependency */,
+			);
+			name = "baige-iosTests";
+			productName = "baige-iosTests";
+			productReference = 529888981A0C65350075C6EC /* baige-iosTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		529888781A0C65350075C6EC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+				ORGANIZATIONNAME = test;
+				TargetAttributes = {
+					5298887F1A0C65350075C6EC = {
+						CreatedOnToolsVersion = 6.1;
+					};
+					529888971A0C65350075C6EC = {
+						CreatedOnToolsVersion = 6.1;
+						TestTargetID = 5298887F1A0C65350075C6EC;
+					};
+				};
+			};
+			buildConfigurationList = 5298887B1A0C65350075C6EC /* Build configuration list for PBXProject "baige-ios" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 529888771A0C65350075C6EC;
+			productRefGroup = 529888811A0C65350075C6EC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5298887F1A0C65350075C6EC /* baige-ios */,
+				529888971A0C65350075C6EC /* baige-iosTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5298887E1A0C65350075C6EC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5298888E1A0C65350075C6EC /* Main.storyboard in Resources */,
+				529888931A0C65350075C6EC /* LaunchScreen.xib in Resources */,
+				529888901A0C65350075C6EC /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		529888961A0C65350075C6EC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5298887C1A0C65350075C6EC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5298888B1A0C65350075C6EC /* ViewController.swift in Sources */,
+				529888891A0C65350075C6EC /* baige_ios.xcdatamodeld in Sources */,
+				529888861A0C65350075C6EC /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		529888941A0C65350075C6EC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5298889F1A0C65350075C6EC /* baige_iosTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5298889A1A0C65350075C6EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5298887F1A0C65350075C6EC /* baige-ios */;
+			targetProxy = 529888991A0C65350075C6EC /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		5298888C1A0C65350075C6EC /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5298888D1A0C65350075C6EC /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		529888911A0C65350075C6EC /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				529888921A0C65350075C6EC /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		529888A01A0C65350075C6EC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		529888A11A0C65350075C6EC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		529888A31A0C65350075C6EC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "baige-ios/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		529888A41A0C65350075C6EC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = "baige-ios/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		529888A61A0C65350075C6EC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "baige-iosTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/baige-ios.app/baige-ios";
+			};
+			name = Debug;
+		};
+		529888A71A0C65350075C6EC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "baige-iosTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/baige-ios.app/baige-ios";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5298887B1A0C65350075C6EC /* Build configuration list for PBXProject "baige-ios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				529888A01A0C65350075C6EC /* Debug */,
+				529888A11A0C65350075C6EC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		529888A21A0C65350075C6EC /* Build configuration list for PBXNativeTarget "baige-ios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				529888A31A0C65350075C6EC /* Debug */,
+				529888A41A0C65350075C6EC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		529888A51A0C65350075C6EC /* Build configuration list for PBXNativeTarget "baige-iosTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				529888A61A0C65350075C6EC /* Debug */,
+				529888A71A0C65350075C6EC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		529888871A0C65350075C6EC /* baige_ios.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				529888881A0C65350075C6EC /* baige_ios.xcdatamodel */,
+			);
+			currentVersion = 529888881A0C65350075C6EC /* baige_ios.xcdatamodel */;
+			path = baige_ios.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = 529888781A0C65350075C6EC /* Project object */;
+}
