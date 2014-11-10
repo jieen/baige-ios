@@ -10,16 +10,22 @@
 import UIKit
 
 class Login : UIViewController {
-
+    
     @IBOutlet weak var tfUserName: UITextField!
     @IBOutlet weak var tfPassWord: UITextField!
     @IBOutlet weak var btnLogin: UIButton!
 
+//    var timer:NSTimer
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+//        timer = NSTimer.scheduledTimerWithTimeInterval(0.1, target: self, selector:"checkUserLogin", userInfo: nil, repeats: true)
     }
+    
+    func checkUserLogin()->Bool{
+        return false
+    }
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -47,21 +53,22 @@ class Login : UIViewController {
             return
         }
         
-        HttpUtils().checkLoginAsync(tfUserName.text, passwd: tfPassWord.text)
+//        var ctx = self
+//        HttpUtils().checkLogin(tfUserName.text, passwd: tfPassWord.text)
 //        //同步
-//        if(HttpUtils().checkLoginSync(tfUserName.text,passwd: tfPassWord.text))
-//        {
-//            println("login success")
-//            //跳转到登录成功界面
-//            self.performSegueWithIdentifier("loginSuccess", sender: self)
-//        }
-//        else
-//        {
-//            //登录失败
-//            var alertView: UIAlertView = UIAlertView(title: "登录失败", message: "用户名或者密码错误", delegate: nil, cancelButtonTitle: "确定")
-//            alertView.show()
-//            return
-//        }
+        if(HttpUtils().checkLogin(tfUserName.text,passwd: tfPassWord.text))
+        {
+            println("login success")
+            //跳转到登录成功界面
+            self.performSegueWithIdentifier("login", sender: self)
+        }
+        else
+        {
+            //登录失败
+            var alertView: UIAlertView = UIAlertView(title: "登录失败", message: "用户名或者密码错误", delegate: nil, cancelButtonTitle: "确定")
+            alertView.show()
+            return
+        }
         
     }
 }

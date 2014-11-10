@@ -13,10 +13,15 @@ import Alamofire
 var userid="0"
 var sessionid="0"
 
+var syncType = 1
+
 
 class HttpUtils{
     var ServerUrl = "http://10.0.16.246:8080"
 //    var ServerUrl = "http://10.0.17.189"    
+    enum USER_TYPE:Int{
+        case LOGIN,REGISTER,LOGOUT,GETUSERINFO
+    }
     
     /**
         冒号和逗号转换
@@ -32,15 +37,16 @@ class HttpUtils{
     }
     
     //异步post
-    func PostJSONDataAsync(myUrl:String,rawData:AnyObject)->(){
+    func PostJSONDataAsync(myUrl:String,rawData:AnyObject,type:USER_TYPE)->(){
+//        var type = 0;
         var url = NSURL(string : myUrl)
         let request = NSMutableURLRequest(URL: url!)
         println("sessionID is \(sessionid)")
-        request.setValue("sessionid=" + sessionid,forHTTPHeaderField: "Cookie")
+//        request.setValue("sessionid=" + sessionid,forHTTPHeaderField: "Cookie")
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.HTTPMethod = "POST"
         var data = rawData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion:true)
-        println(data)
+//        println(data)
         request.HTTPBody = data
         
         NSURLConnection.sendAsynchronousRequest(request, queue: NSOperationQueue(), completionHandler: {
@@ -50,12 +56,33 @@ class HttpUtils{
                     println("\(error)")
                 }else
                 {
-                    var json:AnyObject! = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
+                    var json = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
                     var errCode: AnyObject? = json.objectForKey("errorcode")
                     errMsg = json.objectForKey("errormsg") as String
                     println("errCode: \(errCode) errMsg: \(errMsg)")
-                    if(errCode == nil || errMsg.isEmpty){
+                    if(errCode == nil || errMsg.isEmpty || errCode?.integerValue != 0){
+                        //刷新主界面
+                        dispatch_async(dispatch_get_main_queue(), {
+                            var alertDialog = UIAlertView(title: "提示", message: errMsg, delegate: nil, cancelButtonTitle: "OK")
+                            alertDialog.show()
+                        })
                         return
+                    }
+                    var data: AnyObject? = json.objectForKey("data")
+                    switch(type)
+                    {
+                    case .LOGIN:
+                        println("LOGIN TYPE")
+                        ParseUserInfo.ParaseUserLogin(myUrl,data:data!)
+                        break;
+                    case .REGISTER:
+                        ParseUserInfo.ParaseUserRegister(myUrl,data: data!)
+                        break;
+                    case .LOGOUT:
+                        ParseUserInfo.ParaseUserLogout()
+                        break;
+                    default:
+                        break;
                     }
                     if(errCode?.intValue == 0){
                         println("login success")
@@ -65,11 +92,6 @@ class HttpUtils{
                         println("login failed")
                     }
                 }
-                //刷新主界面
-                dispatch_async(dispatch_get_main_queue(), {
-                    var alertDialog = UIAlertView(title: "提示", message: errMsg, delegate: nil, cancelButtonTitle: "OK")
-                    alertDialog.show()
-                })
             })
         }
     /*
@@ -90,14 +112,23 @@ class HttpUtils{
             respose = NSURLConnection.sendSynchronousRequest(request, returningResponse: nil, error: nil)!
             return respose
     }
-    func checkLoginAsync(user:String,passwd:String)->(){
-        println("user is \(user) and passwd is \(passwd)")
-        var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uname\":\"\(user)\",\"pwd\":\"\(passwd)\"}}"
-        var baseStr:String = "content="
-        var rawDataStr = urlEncode(baseStr,oriString: dataIn)
-        //println(rawDataStr)
-        println("SESSIONID: "+sessionid)
-        PostJSONDataAsync(ServerUrl+"/tipsbar/login/",rawData: rawDataStr)
+    func checkLogin(user:String,passwd:String)->Bool{
+        if(syncType == 1)
+        {
+            println("SYNC")
+            return checkLoginSync(user,passwd: passwd)
+        }else
+        {
+            println("user is \(user) and passwd is \(passwd)")
+            var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uname\":\"\(user)\",\"pwd\":\"\(passwd)\"}}"
+            var baseStr:String = "content="
+            var rawDataStr = urlEncode(baseStr,oriString: dataIn)
+            //println(rawDataStr)
+            println("SESSIONID: "+sessionid)
+            PostJSONDataAsync(ServerUrl+"/tipsbar/login/",rawData: rawDataStr,type: .LOGIN)
+            return true
+        }
+        
     }
     //登录处理
     func checkLoginSync(user:String,passwd:String)->Bool{
@@ -107,45 +138,40 @@ class HttpUtils{
         var rawDataStr = urlEncode(baseStr,oriString: dataIn)
         //println(rawDataStr)
         println("SESSIONID: "+sessionid)
-        var response3 = PostJSONData(ServerUrl+"/tipsbar/login/",rawData: rawDataStr)
-        if(response3.length <= 0)
+        var myUrl = ServerUrl+"/tipsbar/login/"
+        if(syncType == 1)
         {
+            
+            var response3 = PostJSONData(myUrl,rawData: rawDataStr)
+            if(response3.length <= 0)
+            {
+                return false
+            }
+            var storage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
+            var cookie = NSHTTPCookieStorage.cookiesForURL(storage)(NSURL(string:ServerUrl+"/tipsbar/login/")!) as [NSHTTPCookie]
+            for cokie in cookie{
+                //            println(cokie.name+" : "+cokie.value!)
+                sessionid = cokie.value!
+                println("SESSIONID:"+sessionid)
+            }
+            let retStr = NSString(data: response3, encoding: NSUTF8StringEncoding)
+            println("Response: '\(retStr)'")
+            var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(response3, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
+            var ecode: AnyObject? = json.objectForKey("errorcode")
+            println(ecode?.intValue)
+            if(ecode?.intValue == 0)
+            {
+                var emsg: AnyObject? = json.objectForKey("errormsg")
+                var data = json.objectForKey("data") as NSDictionary
+                userid = data.valueForKey("uid") as NSString
+                println("ecode: \(ecode),emsg:\(emsg),uid:\(userid)")
+                println("Login In,SessionID:\(sessionid)")
+                return true
+            }
             return false
-        }
-        var storage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
-        var cookie = NSHTTPCookieStorage.cookiesForURL(storage)(NSURL(string:ServerUrl+"/tipsbar/login/")!) as [NSHTTPCookie]
-        for cokie in cookie{
-//            println(cokie.name+" : "+cokie.value!)
-            sessionid = cokie.value!
-            println("SESSIONID:"+sessionid)
-        }
-        
-//        saveCookie(ServerUrl+"/tipsbar/login")
-//        var storage = NSHTTPCookieStorage.sharedHTTPCookieStorage()
-//        var cookie = NSHTTPCookieStorage.cookiesForURL(storage)(NSURL(string:ServerUrl+"/tipsbar/login/")!)
-//        if(cookie?.count > 0)
-//        {
-//            println("cookie save ok")
-//            
-//        }else
-//        {
-//            println("Can't save cookie")
-//        }
-//        storage.setCookies(cookie, forURL: NSURL(response3.URL), mainDocumentURL: nil)
-        
-        let retStr = NSString(data: response3, encoding: NSUTF8StringEncoding)
-        println("Response: '\(retStr)'")
-        var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(response3, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
-        var ecode: AnyObject? = json.objectForKey("errorcode")
-        println(ecode?.intValue)
-        if(ecode?.intValue == 0)
+        }else
         {
-            var emsg: AnyObject? = json.objectForKey("errormsg")
-            var data = json.objectForKey("data") as NSDictionary
-            userid = data.valueForKey("uid") as NSString
-            println("ecode: \(ecode),emsg:\(emsg),uid:\(userid)")
-            println("Login In,SessionID:\(sessionid)")
-            return true
+//            PostJSONDataAsync(nil,myUrl, rawData: rawDataStr, type: .LOGIN)
         }
         return false
     }
@@ -273,97 +299,112 @@ class HttpUtils{
        return false
     }
     //注册处理
-    func RegUser(user:String,passwd:String)->Bool{
+    func RegUser(user:String,passwd:String)->(){
         
         println("user is \(user) and passwd is \(passwd)")
-//        var data = ["errorcode":0,"errormsg":0,"data":["uname":user,"pwd":passwd]]
+        //      var data = ["errorcode":0,"errormsg":0,"data":["uname":user,"pwd":passwd]]
         
         var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uname\":\"\(user)\",\"pwd\":\"\(passwd)\"}}"
         var baseStr:String = "content="
         var rawDataStr = urlEncode(baseStr,oriString: dataIn)
         println(rawDataStr)
+        var myUrl = ServerUrl+"/tipsbar/register/"
         
-        var response3 = PostJSONData(ServerUrl+"/tipsbar/register/",rawData: rawDataStr)
-        
-        if(response3.length <= 0)
+        if(syncType == 1)
         {
-            return false
-        }
-        let retStr = NSString(data: response3, encoding: NSUTF8StringEncoding)
-        println("Response: '\(retStr)'")
-        var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(response3, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
-        var ecode: AnyObject? = json.objectForKey("errorcode")
-        println(ecode?.intValue)
-        if(ecode?.intValue == 0)
+            var response3 = PostJSONData(myUrl,rawData: rawDataStr)
+        
+            if(response3.length <= 0)
+            {
+                return
+            }
+            let retStr = NSString(data: response3, encoding: NSUTF8StringEncoding)
+            println("Response: '\(retStr)'")
+            var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(response3, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
+            var ecode: AnyObject? = json.objectForKey("errorcode")
+            println(ecode?.intValue)
+            if(ecode?.intValue == 0)
+            {
+                //注册成功
+                var alertView: UIAlertView = UIAlertView(title: "注册成功", message:"注册成功", delegate: nil, cancelButtonTitle: "确定")
+                alertView.show()
+                return
+            }
+            if let emsg:NSString = json.objectForKey("errormsg") as? NSString{
+                //注册失败
+                var alertView: UIAlertView = UIAlertView(title: "注册失败", message: emsg, delegate: nil, cancelButtonTitle: "确定")
+                alertView.show()
+            }
+            return
+        }else
         {
-            //注册失败
-            var alertView: UIAlertView = UIAlertView(title: "注册成功", message:"注册成功", delegate: nil, cancelButtonTitle: "确定")
-            alertView.show()
-            return true
-//            var emsg: AnyObject? = json.objectForKey("errormsg")
-//            var data = json.objectForKey("data") as NSDictionary
-//            var uid: AnyObject? = data.objectForKey("uid")
-//            println("ecode: \(ecode),emsg:\(emsg),uid:\(uid)")
+//            PostJSONDataAsync(myUrl,rawData: rawDataStr,type: .REGISTER)
         }
-        if let emsg:NSString = json.objectForKey("errormsg") as? NSString{
-            //注册失败
-            var alertView: UIAlertView = UIAlertView(title: "注册失败", message: emsg, delegate: nil, cancelButtonTitle: "确定")
-            alertView.show()
-        }
-        return false
-        
-        
-//        var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(respose, options: NSJSONReadingOptions.MutableLeaves, error: nil) as NSDictionary
-//        
-//        var errorcode:AnyObject! = json.objectForKey("errorcode")
-//        var errormsg: AnyObject!  = json.objectForKey("errormsg")
-//        if(errorcode as NSNumber == 0){
-//            return true
-//        }
-//        return false
     }
     //退出
-    func logOut()->Bool{
+    func logOut()->(){
 //        var data = ["errorcode":0,"errormsg":0,"data":["uid":uid]]
         var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uid\":\"\(userid)\"}}"
         var baseStr:String = "content="
         var rawDataStr = urlEncode(baseStr,oriString: dataIn)
+        var myUrl:NSString = ServerUrl+"/tipsbar/logout/"
 //        println(rawDataStr)
-        var response3 = PostJSONData(ServerUrl+"/tipsbar/logout/",rawData: rawDataStr)
-        if(response3.length <= 0)
+        if(syncType == 1)
         {
-            return false
-        }
-        let retStr = NSString(data: response3, encoding: NSUTF8StringEncoding)
-        println("Response: '\(retStr)'")
-        var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(response3, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
-        var ecode: AnyObject? = json.objectForKey("errorcode")
-        println(ecode?.intValue)
-        if(ecode?.intValue == 0)
-        {
-            var alert = UIAlertView(title: "退出登录", message: "退出登录成功", delegate: nil, cancelButtonTitle: "确定")
+            var response3 = PostJSONData(myUrl,rawData: rawDataStr)
+            if(response3.length <= 0)
+            {
+                return
+            }
+            let retStr = NSString(data: response3, encoding: NSUTF8StringEncoding)
+            println("Response: '\(retStr)'")
+            var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(response3, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
+            var ecode: AnyObject? = json.objectForKey("errorcode")
+            println(ecode?.intValue)
+            if(ecode?.intValue == 0)
+            {
+                var alert = UIAlertView(title: "退出登录", message: "退出登录成功", delegate: nil, cancelButtonTitle: "确定")
+                alert.show()
+                return
+            }
+            var alert = UIAlertView(title: "退出登录", message: "退出登录失败", delegate: nil, cancelButtonTitle: "确定")
             alert.show()
-            return true
+            return
+        }else
+        {
+//            PostJSONDataAsync(ctx,myUrl,rawData: rawDataStr,type: .LOGOUT)
         }
-        var alert = UIAlertView(title: "退出登录", message: "退出登录失败", delegate: nil, cancelButtonTitle: "确定")
-        alert.show()
-        return false
     }
     //用户信息
-    func GetUserInfo()->Bool{
+    func GetUserInfo()->(){
 //        var data = ["errorcode":0,"errormsg":0,"data":["uid":uid]]
         var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uid\":\"\(userid)\"}}"
         var baseStr:String = "content="
         var rawDataStr = urlEncode(baseStr,oriString: dataIn)
-        var respose = PostJSONData(ServerUrl+"/tipsbar/userinfo/get/",rawData: rawDataStr)
-        var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(respose, options: NSJSONReadingOptions.MutableLeaves, error: nil) as NSDictionary
         
-        var errorcode:AnyObject! = json.objectForKey("errorcode")
-        var errormsg: AnyObject!  = json.objectForKey("errormsg")
-        if(errorcode as NSNumber == 0){
-            return true
+        var myUrl = ServerUrl+"/tipsbar/userinfo/get/"
+        if(syncType == 1)
+        {
+            println("GetUserInfo in")
+            var respose = PostJSONData(myUrl,rawData: rawDataStr)
+            var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(respose, options: NSJSONReadingOptions.MutableLeaves, error: nil) as NSDictionary
+            
+            var errorcode:AnyObject! = json.objectForKey("errorcode")
+            println("errorcode: \(errorcode)")
+            var errormsg: AnyObject!  = json.objectForKey("errormsg")
+            if(errorcode.intValue == 0){
+                var user = UserInfo()
+                var data = json.objectForKey("data") as NSDictionary
+                user.uid = data.objectForKey("uid") as? String
+                user.uname = data.objectForKey("uname") as? String
+                println("id: \(user.uid),name:\(uname)")
+                return
+            }
+            return
+        }else
+        {
+//            PostJSONDataAsync(myUrl, rawData: rawDataStr, type: .GETUSERINFO)
         }
-        return false
     }
     //修改用户密码
     func ModifyPasswd(uid:Int,uname:String,oldPwd:String,newPwd:String)->Bool
@@ -378,9 +419,11 @@ class HttpUtils{
         
         var errorcode:AnyObject! = json.objectForKey("errorcode")
         var errormsg: AnyObject!  = json.objectForKey("errormsg")
-        if(errorcode as NSNumber == 0){
+        if(errorcode.intValue == 0){
+            println("Modify Password OK")
             return true
         }
+        println("Modify Password Failed")
         return false
     }
     //修改用户其他信息
@@ -396,9 +439,11 @@ class HttpUtils{
         
         var errorcode:AnyObject! = json.objectForKey("errorcode")
         var errormsg: AnyObject!  = json.objectForKey("errormsg")
-        if(errorcode as NSNumber == 0){
+        if(errorcode.intValue == 0){
+            println("Modify Other Success")
             return true
         }
+        println("Modify Other Failed")
         return false
     }
     //是否有小纸条
