@@ -17,8 +17,9 @@ var syncType = 1
 
 
 class HttpUtils{
-    var ServerUrl = "http://10.0.16.246:8080"
-//    var ServerUrl = "http://10.0.17.189"    
+//    var ServerUrl = "http://10.0.16.246:8080"
+    var ServerUrl = "http://baigeapp.duapp.com"
+//    var ServerUrl = "http://10.0.17.189"
     enum USER_TYPE:Int{
         case LOGIN,REGISTER,LOGOUT,GETUSERINFO
     }
@@ -104,19 +105,26 @@ class HttpUtils{
         request.setValue("sessionid=" + sessionid,forHTTPHeaderField: "Cookie")
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.HTTPMethod = "POST"
+        request.timeoutInterval = 3
         var data = rawData.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion:true)
-        println(data)
+//        println(data)
         request.HTTPBody = data
         var respose:NSData!
         //同步
-            respose = NSURLConnection.sendSynchronousRequest(request, returningResponse: nil, error: nil)!
-            return respose
+        respose = NSURLConnection.sendSynchronousRequest(request, returningResponse: nil, error: nil)
+        if(respose == nil)
+        {
+            println("nil")
+            return "".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
+        }
+        return respose
     }
     func checkLogin(user:String,passwd:String)->Bool{
         if(syncType == 1)
         {
             println("SYNC")
-            return checkLoginSync(user,passwd: passwd)
+            var ret = checkLoginSync(user,passwd: passwd)
+            return ret
         }else
         {
             println("user is \(user) and passwd is \(passwd)")
@@ -171,7 +179,8 @@ class HttpUtils{
             return false
         }else
         {
-//            PostJSONDataAsync(nil,myUrl, rawData: rawDataStr, type: .LOGIN)
+            PostJSONDataAsync(myUrl, rawData: rawDataStr, type: .LOGIN)
+//            return false
         }
         return false
     }
@@ -206,48 +215,11 @@ class HttpUtils{
     func checkLogin2(user:String,passwd:String)->Bool{
 
         println("user is \(user) and passwd is \(passwd)")
-//        var data = "\"\"{errorcode\":\"0\",\"errormsg\":\"0\",\"data\":{\"uname\":\"asda\",\"pwd\":\"aab\"}}\""
         var data:[String:AnyObject] = ["content":["errorcode":0,"errormsg":0,"data":["uname":user,"pwd":passwd]]]
-//        var dataIn:[String:AnyObject] = ["errorcode":0,"errormsg":0,"data":["uname":user,"pwd":passwd]]
         var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uname\":\"\(user)\",\"pwd\":\"\(passwd)\"}}"
-//        var dataIn = "{user:mynasdfa,pwd:diajd}"
-        //OK
-        //        var rawDataStr = "content=%7B%22errorcode%22%3A+0%2C%22errormsg%22%3A0%2C%22data%22%3A%7B%22uname%22%3A%22luory%22%2C%22pwd%22%3A%22luory%22%7D%7D"
-                             //"content=%7B%22errorcode%22:0,%22errormsg%22:0,%22data%22:%7B%22uname%22:%E7%94%A8%E6%88%B7,%22pwd%22:%E5%AF%86%E7%A0%81%7D%7D"
-//         var rawDataStr = dataIn.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
-//        var rawDataStr = "content=%7B%22errorcode%22%3A0%2C%22errormsg%22%3A0%2C%22data%22%3A%7B%22uname%22%3A%22luory%22%2C%22pwd%22%3A%22luory%22%7D%7D"
-        
         var baseStr:String = "content="
         var rawDataStr = urlEncode(baseStr,oriString: dataIn)
-//        rawDataStr = rawDataStr.stringByReplacingOccurrencesOfString(":", withString: "%3A")
-//        rawDataStr = rawDataStr.stringByReplacingOccurrencesOfString(",", withString: "%2C")
-        //content=%7B%22errorcode%22%3A+0%2C%22errormsg%22%3A0%2C%22data%22%3A%7B%22uname%22%3A%22luory%22%2C%22pwd%22%3A%22luory%22%7D%7D
         println(rawDataStr)
-        //        rawData.dataUsingEncoding(1, allowLossyConversion: true)
-//        var rawDataStr = dataIn.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion:true)
-      
-        
-        
-//        var response3 = PostJSONData(ServerUrl+"/tipsbar/login/",rawData: rawDataStr)
-//        if(response3.length <= 0)
-//        {
-//            return false
-//        }
-//        let retStr = NSString(data: response3, encoding: NSUTF8StringEncoding)
-//        println("Response: '\(retStr)'")
-//        var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(response3, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
-//        var ecode: AnyObject? = json.objectForKey("errorcode")
-//        println(ecode?.intValue)
-//        if(ecode?.intValue == 0)
-//        {
-//            var emsg: AnyObject? = json.objectForKey("errormsg")
-//            var data = json.objectForKey("data") as NSDictionary
-//            var uid: AnyObject? = data.objectForKey("uid")
-//            println("ecode: \(ecode),emsg:\(emsg),uid:\(uid)")
-//        }
-       
-        
-        
         post(data, url: ServerUrl+"/tipsbar/login/") {
             (succeeded: Bool, msg: String) -> () in
             var alert = UIAlertView(title: "Success!", message: msg, delegate: nil, cancelButtonTitle: "Okay.")
@@ -376,7 +348,9 @@ class HttpUtils{
         }
     }
     //用户信息
-    func GetUserInfo()->(){
+    func GetUserInfo()->UserInfo{
+        
+        var user = UserInfo()
 //        var data = ["errorcode":0,"errormsg":0,"data":["uid":uid]]
         var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uid\":\"\(userid)\"}}"
         var baseStr:String = "content="
@@ -389,22 +363,31 @@ class HttpUtils{
             var respose = PostJSONData(myUrl,rawData: rawDataStr)
             var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(respose, options: NSJSONReadingOptions.MutableLeaves, error: nil) as NSDictionary
             
+            println(json)
             var errorcode:AnyObject! = json.objectForKey("errorcode")
             println("errorcode: \(errorcode)")
             var errormsg: AnyObject!  = json.objectForKey("errormsg")
             if(errorcode.intValue == 0){
-                var user = UserInfo()
+//                var user = UserInfo()
                 var data = json.objectForKey("data") as NSDictionary
                 user.uid = data.objectForKey("uid") as? String
                 user.uname = data.objectForKey("uname") as? String
-                println("id: \(user.uid),name:\(uname)")
-                return
+                user.phone = data.objectForKey("phone") as? String
+                user.address = data.objectForKey("address") as? String
+                user.authid = data.objectForKey("authid") as? String
+                user.authname = data.objectForKey("authname") as? String
+                user.picaddr = data.objectForKey("picaddr") as? String
+                user.postcode = data.objectForKey("postcode") as? String
+                user.receivepeople = data.objectForKey("receivepeople") as? String
+                println("id: \(user.uid),name:\(user.uname),phone: \(user.phone)")
+                return user
             }
-            return
+            return user
         }else
         {
 //            PostJSONDataAsync(myUrl, rawData: rawDataStr, type: .GETUSERINFO)
         }
+        return user
     }
     //修改用户密码
     func ModifyPasswd(uid:Int,uname:String,oldPwd:String,newPwd:String)->Bool
@@ -434,7 +417,7 @@ class HttpUtils{
         var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uid\":\"\(userid)\",\"phone\":\"\(phone)\",\"address\":\"\(address)\",\"receivepeople\":\"\(recvman)\",\"postcode\":\"\(postcode)\",\"picaddr\":\"\(picaddr)\"}}"
         var baseStr:String = "content="
         var rawDataStr = urlEncode(baseStr,oriString: dataIn)
-        var respose = PostJSONData(ServerUrl+"/tipsbar/update/other.php",rawData: rawDataStr)
+        var respose = PostJSONData(ServerUrl+"/tipsbar/userinfo/update/other.php",rawData: rawDataStr)
         var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(respose, options: NSJSONReadingOptions.MutableLeaves, error: nil) as NSDictionary
         
         var errorcode:AnyObject! = json.objectForKey("errorcode")
@@ -443,6 +426,7 @@ class HttpUtils{
             println("Modify Other Success")
             return true
         }
+        println("errorcode: \(errorcode),msg: \(errormsg)")
         println("Modify Other Failed")
         return false
     }
@@ -455,11 +439,11 @@ class HttpUtils{
         var baseStr:String = "content="
         var rawDataStr = urlEncode(baseStr,oriString: dataIn)
         var respose = PostJSONData(ServerUrl+"/tipsbar/usermsg/checknew/",rawData: rawDataStr)
-        var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(respose, options: NSJSONReadingOptions.MutableLeaves, error: nil) as NSDictionary
+        var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(respose, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
         
         var errorcode:AnyObject! = json.objectForKey("errorcode")
         var errormsg: AnyObject!  = json.objectForKey("errormsg")
-        if(errorcode as NSNumber == 0){
+        if(errorcode.intValue == 0){
             var data = json.objectForKey("data") as NSDictionary
             var hasnew = data.objectForKey("hasnew") as Int
             if(hasnew == 1){
@@ -472,7 +456,7 @@ class HttpUtils{
         return false
     }
     //发送短消息
-    func UserSendNewShortMsg(fromuid:Int,touid:Int,subject:String,msg:String,replypid:Int)->Bool
+    func UserSendNewShortMsg(fromuid:String,touid:String,subject:String,msg:String,replypid:Int)->Bool
     {
         println("user is \(fromuid)")
         
@@ -486,7 +470,7 @@ class HttpUtils{
         
         var errorcode:AnyObject! = json.objectForKey("errorcode")
         var errormsg: AnyObject!  = json.objectForKey("errormsg")
-        if(errorcode as NSNumber == 0){
+        if(errorcode.intValue == 0){
             var data = json.objectForKey("data") as NSDictionary
             var lasted: AnyObject? = data.objectForKey("lasted")
             println("the lasted msg id is: \(lasted)")
@@ -523,33 +507,83 @@ class HttpUtils{
         println("user is \(uid)")
 //        var data = ["errorcode":0,"errormsg":0,"data":["uid":uid,"page":page,"pagesize":pagesize,"folder":folder,"filter":filter,"msglen":msglen]]
         
-        var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uid\":\"\(userid)\",\"page\":\"\(page)\",\"pagesize\":\"\(pagesize)\",\"folder\":\"\(folder)\",\"filter\":\"\(filter)\",\"msglen\":\"\(msglen)\"}}"
+        var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uid\":\(userid),\"page\":\(page),\"pagesize\":\(pagesize),\"folder\":\"\(folder)\",\"filter\":\"\(filter)\",\"msglen\":\(msglen)}}"
         var baseStr:String = "content="
         var rawDataStr = urlEncode(baseStr,oriString: dataIn)
         
         var respose = PostJSONData(ServerUrl+"/tipsbar/usermsg/getlist/",rawData: rawDataStr)
-        var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(respose, options: NSJSONReadingOptions.MutableLeaves, error: nil) as NSDictionary
+        //test code start
+        var str = NSString(data:respose,encoding:NSUTF8StringEncoding)
+        println(str)
+        //test code end
+//        let json = JSON(data:respose)
+        var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(respose, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
         
         var errorcode:AnyObject! = json.objectForKey("errorcode")
         var errormsg: AnyObject!  = json.objectForKey("errormsg")
-        if(errorcode as NSNumber == 0){
-            var data = json.objectForKey("data") as NSDictionary
-            var count: AnyObject? = data.objectForKey("count")
-            println("The msg Count is \(count)")
-            var subData = data.objectForKey("data") as NSDictionary
-            var item0 = subData.objectForKey("[0]") as NSDictionary
-            var plid:AnyObject? = item0.objectForKey("Plid")
-            var uid: AnyObject? = item0.objectForKey("Uid")
-            var isnew: AnyObject? = item0.objectForKey("Isnew")
-            var pmid: AnyObject? = item0.objectForKey("pmid")
-            var msgfrom: AnyObject? = item0.objectForKey("msgfrom")
-            var msgfromid: AnyObject? = item0.objectForKey("msgfromid")
-            var msgtoid: AnyObject? = item0.objectForKey("msgtoid")
-            var hasnew: AnyObject? = item0.objectForKey("new")
-            var subject: AnyObject? = item0.objectForKey("subject")
-            var dateline: AnyObject? = item0.objectForKey("dateline")
-            var msg: AnyObject? = item0.objectForKey("msg")
-            var daterange: AnyObject? = item0.objectForKey("daterange")
+
+        if(errorcode.intValue == 0){
+            var data: AnyObject? = json.objectForKey("data")
+            if((data?.isEqual(NSNull)) == nil){
+                return false
+            }
+    /*
+        {
+            "errorcode":"0",
+            "errormsg":"获取消息列表成功",
+            "data":
+            [
+                {
+                    "plid":"1",
+                    "uid":"9",
+                    "isnew":"1",
+                    "pmnum":"2",
+                    "lastupdate":"0",
+                    "lastdateline":"1415694571",
+                    "authorid":"11",
+                    "pmtype":"1",
+                    "subject":"my title",
+                    "members":"2",
+                    "dateline":"1415694571",
+                    "lastmessage":"",
+                    "touid":"11",
+                    "founddateline":"1415694518",
+                    "pmid":"1",
+                    "lastauthorid":"11",
+                    "lastauthor":"test1",
+                    "msgfromid":"11",
+                    "msgfrom":"test1",
+                    "message":"my content",
+                    "new":"1",
+                    "msgtoid":"11",
+                    "daterange":"1",
+                    "tousername":"test1"
+                }
+            ]
+        }
+            
+    */
+            
+            var realData = json.objectForKey("data") as NSArray
+            
+//            var realData = json.objectForKey("data") as NSDictionary
+//            var count: AnyObject? = realData.objectForKey("count")
+//            println("The msg Count is \(count)")
+//            var subData = realData.objectForKey("data") as NSDictionary
+//              var item0 = subData.objectForKey("[0]") as NSDictionary
+//                var plid:AnyObject? = item0.objectForKey("Plid")
+//                var uid: AnyObject? = item0.objectForKey("Uid")
+//                var isnew: AnyObject? = item0.objectForKey("Isnew")
+//                var pmid: AnyObject? = item0.objectForKey("pmid")
+//                var msgfrom: AnyObject? = item0.objectForKey("msgfrom")
+//                var msgfromid: AnyObject? = item0.objectForKey("msgfromid")
+//                var msgtoid: AnyObject? = item0.objectForKey("msgtoid")
+//                var hasnew: AnyObject? = item0.objectForKey("new")
+//                var subject: AnyObject? = item0.objectForKey("subject")
+//                var dateline: AnyObject? = item0.objectForKey("dateline")
+//                var msg: AnyObject? = item0.objectForKey("msg")
+//                var daterange: AnyObject? = item0.objectForKey("daterange")
+            
             return true
         }
         return false

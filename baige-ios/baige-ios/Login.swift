@@ -65,7 +65,7 @@ class Login : UIViewController {
         else
         {
             //登录失败
-            var alertView: UIAlertView = UIAlertView(title: "登录失败", message: "用户名或者密码错误", delegate: nil, cancelButtonTitle: "确定")
+            var alertView: UIAlertView = UIAlertView(title: "登录失败", message: "请检查网络和用户名,密码信息是否正常", delegate: nil, cancelButtonTitle: "确定")
             alertView.show()
             return
         }
