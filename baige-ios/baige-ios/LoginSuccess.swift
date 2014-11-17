@@ -8,6 +8,11 @@
 
 import UiKit
 
+
+protocol MsgListProtocal{
+    func didReceiveMsgList(msglist:Array<MessageInfo>)
+}
+
 class LoginSuccess : UIViewController{
     
     @IBOutlet weak var tfUname: UITextField!
@@ -78,11 +83,56 @@ class LoginSuccess : UIViewController{
         tfOldPwd.text = user.password
     }
     
+    /*
+        {
+            "errorcode":"0",
+            "errormsg":"获取消息列表成功",
+            "data":
+                {
+                    "count":1,
+                    "data":
+                        [
+                            {
+                                "plid":"1",
+                                "uid":"9",
+                                "isnew":"1",
+                                "pmnum":"2",
+                                "lastupdate":"0",
+                                "lastdateline":"1415694571",
+                                "authorid":"11",
+                                "pmtype":"1",
+                                "subject":"my title",
+                                "members":"2",
+                                "dateline":"1415694571",
+                                "lastmessage":"",
+                                "touid":"11",
+                                "founddateline":"1415694518",
+                                "pmid":"1",
+                                "lastauthorid":"11",
+                                "lastauthor":"test1",
+                                "msgfromid":"11",
+                                "msgfrom":"test1",
+                                "message":"my content",
+                                "new":"1",
+                                "msgtoid":"11",
+                                "daterange":"2",
+                                "tousername":"test1"
+                            }
+                        ]
+                }
+        }
+    
+    */
+    
+    
     //获取纸条列表
     @IBAction func btnGetMsgListClicked(sender: AnyObject) {
-        var ret = HttpUtils().UserGetShortMsgList(0, page: 1, pagesize: 10, folder: "inbox", filter: "newpm", msglen: 0)
-        if(ret){
+        var mi = HttpUtils().UserGetShortMsgList(0, page: 1, pagesize: 10, folder: "inbox", filter: "newpm", msglen: 0)
+        if(mi.count > 0){
+            var delegate:MsgListProtocal?
             println("get msg list success")
+            delegate?.didReceiveMsgList(mi)
+            self.performSegueWithIdentifier("MSGLISTID", sender: self)
         }else
         {
             println("No msg or get list error")

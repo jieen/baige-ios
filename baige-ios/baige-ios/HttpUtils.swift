@@ -8,7 +8,6 @@
 
 import Foundation
 import UiKit
-import Alamofire
 
 var userid="0"
 var sessionid="0"
@@ -501,92 +500,145 @@ class HttpUtils{
         }
         return false
     }
-    //获取短消息列表
-    func UserGetShortMsgList(uid:Int,page:Int,pagesize:Int,folder:String,filter:String,msglen:Int)->Bool
+    
+    
+    
+    /*
+    1.0
     {
-        println("user is \(uid)")
+    "errorcode":"0",
+    "errormsg":"获取消息列表成功",
+    "data":
+    [
+    {
+    "plid":"1",
+    "uid":"9",
+    "isnew":"1",
+    "pmnum":"2",
+    "lastupdate":"0",
+    "lastdateline":"1415694571",
+    "authorid":"11",
+    "pmtype":"1",
+    "subject":"my title",
+    "members":"2",
+    "dateline":"1415694571",
+    "lastmessage":"",
+    "touid":"11",
+    "founddateline":"1415694518",
+    "pmid":"1",
+    "lastauthorid":"11",
+    "lastauthor":"test1",
+    "msgfromid":"11",
+    "msgfrom":"test1",
+    "message":"my content",
+    "new":"1",
+    "msgtoid":"11",
+    "daterange":"1",
+    "tousername":"test1"
+    }
+    ]
+    }
+    1.1
+    {
+    "errorcode":"0",
+    "errormsg":"获取消息列表成功",
+    "data":
+    {
+    "count":1,
+    "data":
+    [
+      {
+        "plid":"1",
+        "uid":"9",
+        "isnew":"1",
+        "pmnum":"2",
+        "lastupdate":"0",
+        "lastdateline":"1415694571",
+        "authorid":"11",
+        "pmtype":"1",
+        "subject":"my title",
+        "members":"2",
+        "dateline":"1415694571",
+        "lastmessage":"",
+        "touid":"11",
+        "founddateline":"1415694518",
+        "pmid":"1",
+        "lastauthorid":"11",
+        "lastauthor":"test1",
+        "msgfromid":"11",
+        "msgfrom":"test1",
+        "message":"my content",
+        "new":"1",
+        "msgtoid":"11",
+        "daterange":"2",
+        "tousername":"test1"
+      }
+    ]
+    }
+    }
+    */
+    //获取短消息列表
+    func UserGetShortMsgList(uid:Int,page:Int,pagesize:Int,folder:String,filter:String,msglen:Int)->Array<MessageInfo>
+    {
+//        println("user is \(uid)")
 //        var data = ["errorcode":0,"errormsg":0,"data":["uid":uid,"page":page,"pagesize":pagesize,"folder":folder,"filter":filter,"msglen":msglen]]
-        
+    
         var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uid\":\(userid),\"page\":\(page),\"pagesize\":\(pagesize),\"folder\":\"\(folder)\",\"filter\":\"\(filter)\",\"msglen\":\(msglen)}}"
         var baseStr:String = "content="
         var rawDataStr = urlEncode(baseStr,oriString: dataIn)
-        
+    
         var respose = PostJSONData(ServerUrl+"/tipsbar/usermsg/getlist/",rawData: rawDataStr)
+        
         //test code start
         var str = NSString(data:respose,encoding:NSUTF8StringEncoding)
         println(str)
         //test code end
-//        let json = JSON(data:respose)
+
         var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(respose, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
-        
+    
         var errorcode:AnyObject! = json.objectForKey("errorcode")
         var errormsg: AnyObject!  = json.objectForKey("errormsg")
 
+        var msgList = Array<MessageInfo>()
+        
         if(errorcode.intValue == 0){
             var data: AnyObject? = json.objectForKey("data")
             if((data?.isEqual(NSNull)) == nil){
-                return false
+                return msgList
             }
-    /*
-        {
-            "errorcode":"0",
-            "errormsg":"获取消息列表成功",
-            "data":
-            [
-                {
-                    "plid":"1",
-                    "uid":"9",
-                    "isnew":"1",
-                    "pmnum":"2",
-                    "lastupdate":"0",
-                    "lastdateline":"1415694571",
-                    "authorid":"11",
-                    "pmtype":"1",
-                    "subject":"my title",
-                    "members":"2",
-                    "dateline":"1415694571",
-                    "lastmessage":"",
-                    "touid":"11",
-                    "founddateline":"1415694518",
-                    "pmid":"1",
-                    "lastauthorid":"11",
-                    "lastauthor":"test1",
-                    "msgfromid":"11",
-                    "msgfrom":"test1",
-                    "message":"my content",
-                    "new":"1",
-                    "msgtoid":"11",
-                    "daterange":"1",
-                    "tousername":"test1"
-                }
-            ]
+
+            var realData = json.objectForKey("data") as NSDictionary
+            var count = realData.objectForKey("count") as Int
+            println("The msg Count is \(count)")
+            var subData = realData.objectForKey("data") as NSArray
+            var msgCount = count
+            if(count != subData.count){
+                msgCount = ( count > subData.count ) ? count : subData.count
+            }
+            
+            for index in 0...msgCount-1 {
+                
+                println("index: \(index)")
+                var mi = MessageInfo()
+                mi.plid = subData[index].objectForKey("plid")
+                mi.uid = subData[index].objectForKey("uid")
+                mi.isnew = subData[index].objectForKey("isnew")
+                mi.pmid = subData[index].objectForKey("pmid")
+                mi.msgfrom = subData[index].objectForKey("msgfrom")
+                mi.msgfromid = subData[index].objectForKey("msgfromid")
+                mi.msgtoid = subData[index].objectForKey("msgtoid")
+                mi.hasnew = subData[index].objectForKey("new")
+                mi.subject = subData[index].objectForKey("subject")
+                mi.dateline = subData[index].objectForKey("dateline")
+                mi.msg = subData[index].objectForKey("msg")
+                mi.daterange = subData[index].objectForKey("daterange")
+                
+                msgList.append(mi)
+                println("msg info: uid: \(mi.uid),list.uid: \(msgList[index].uid)")
+                
+            }
         }
-            
-    */
-            
-            var realData = json.objectForKey("data") as NSArray
-            
-//            var realData = json.objectForKey("data") as NSDictionary
-//            var count: AnyObject? = realData.objectForKey("count")
-//            println("The msg Count is \(count)")
-//            var subData = realData.objectForKey("data") as NSDictionary
-//              var item0 = subData.objectForKey("[0]") as NSDictionary
-//                var plid:AnyObject? = item0.objectForKey("Plid")
-//                var uid: AnyObject? = item0.objectForKey("Uid")
-//                var isnew: AnyObject? = item0.objectForKey("Isnew")
-//                var pmid: AnyObject? = item0.objectForKey("pmid")
-//                var msgfrom: AnyObject? = item0.objectForKey("msgfrom")
-//                var msgfromid: AnyObject? = item0.objectForKey("msgfromid")
-//                var msgtoid: AnyObject? = item0.objectForKey("msgtoid")
-//                var hasnew: AnyObject? = item0.objectForKey("new")
-//                var subject: AnyObject? = item0.objectForKey("subject")
-//                var dateline: AnyObject? = item0.objectForKey("dateline")
-//                var msg: AnyObject? = item0.objectForKey("msg")
-//                var daterange: AnyObject? = item0.objectForKey("daterange")
-            
-            return true
-        }
-        return false
+        return msgList
     }
     //根据会话id获取消息id
     func UserGetShortMsgBySessionId(uid:Int,plid:Int)->Bool
@@ -610,7 +662,6 @@ class HttpUtils{
             println("the msg id is \(plid)")
             var pmid = data.objectForKey("pmid") as NSArray
             println("pm items count is \(pmid.count),the pmid[0] is \(pmid[0])")
-            
             return true
         }
         return false

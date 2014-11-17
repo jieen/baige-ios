@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Alamofire
 
 class AFHttpUtils{
     var serverUrl = "http://10.0.17.246"
@@ -23,6 +22,6 @@ class AFHttpUtils{
             ]
         ]
         
-        Alamofire.request(.POST, serverUrl, parameters: parameters, encoding: .URL)
+//        Alamofire.request(.POST, serverUrl, parameters: parameters, encoding: .URL)
     }
 }

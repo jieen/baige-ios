@@ -154,6 +154,49 @@
             </objects>
             <point key="canvasLocation" x="464" y="128"/>
         </scene>
+        <!--消息列表-->
+        <scene sceneID="Keb-Qo-DYz">
+            <objects>
+                <tableViewController id="HlQ-KZ-Quy" customClass="MsgListViewController" customModule="baige_ios" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="MjK-Pv-34s">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="MsgItemId" id="ha7-aD-ldO">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ha7-aD-ldO" id="3gO-vc-BMY">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="HlQ-KZ-Quy" id="OzD-bg-tdw"/>
+                            <outlet property="delegate" destination="HlQ-KZ-Quy" id="2oa-Q7-mmu"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="消息列表" id="DZZ-wz-Vfy"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2Tl-Wb-mUM" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1263" y="807"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="gDH-VI-EmJ">
+            <objects>
+                <navigationController id="eS4-Cc-hY0" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="qcd-xZ-eRX">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="HlQ-KZ-Quy" kind="relationship" relationship="rootViewController" id="hZa-fK-MyP"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qw1-Co-h1i" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1296" y="139"/>
+        </scene>
         <!--Login Success-->
         <scene sceneID="kx4-v0-aqs">
             <objects>
@@ -376,6 +419,7 @@
                         <outlet property="tfRecvPeople" destination="kEq-mI-d0H" id="7T4-Wf-taz"/>
                         <outlet property="tfUname" destination="D3S-Mf-mj6" id="4fz-AO-TQL"/>
                         <outlet property="view" destination="qA2-sm-P0g" id="E2S-EB-CG0"/>
+                        <segue destination="eS4-Cc-hY0" kind="modal" identifier="MSGLISTID" id="JtZ-EL-7sA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GYT-Qa-90f" userLabel="First Responder" sceneMemberID="firstResponder"/>
