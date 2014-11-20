@@ -154,32 +154,136 @@
             </objects>
             <point key="canvasLocation" x="464" y="128"/>
         </scene>
-        <!--消息列表-->
-        <scene sceneID="Keb-Qo-DYz">
+        <!--消息回复-->
+        <scene sceneID="xfG-GM-4MR">
             <objects>
-                <tableViewController id="HlQ-KZ-Quy" customClass="MsgListViewController" customModule="baige_ios" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="MjK-Pv-34s">
+                <viewController title="消息回复" id="kYT-sA-jfQ" customClass="MsgReplyUser" customModule="baige_ios" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Ea4-2k-Omb"/>
+                        <viewControllerLayoutGuide type="bottom" id="ItQ-yd-4JS"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="gmj-ni-O1A">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Input title" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="9ND-Ex-2TD">
+                                <rect key="frame" x="16" y="103" width="283" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="ToUser:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Klg-aI-FNa">
+                                <rect key="frame" x="21" y="74" width="59" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="userName" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qqt-5M-5z0">
+                                <rect key="frame" x="106" y="74" width="193" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yel-DB-sVM">
+                                <rect key="frame" x="257" y="441" width="30" height="30"/>
+                                <state key="normal" title="回复">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="btnReply:" destination="kYT-sA-jfQ" eventType="touchUpInside" id="Oc0-Ll-zDf"/>
+                                </connections>
+                            </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" indicatorStyle="black" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Wjm-OK-BHA" colorLabel="IBBuiltInLabel-Gray">
+                                <rect key="frame" x="16" y="143" width="283" height="281"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <attributedString key="attributedText"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" keyboardAppearance="light"/>
+                            </textView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OlK-dN-cPf">
+                                <rect key="frame" x="137" y="441" width="30" height="30"/>
+                                <state key="normal" title="返回">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="KUS-ke-Q0R" kind="modal" id="YI1-TT-mgG"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="MsgItemId" id="ha7-aD-ldO">
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ha7-aD-ldO" id="3gO-vc-BMY">
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="HlQ-KZ-Quy" id="OzD-bg-tdw"/>
-                            <outlet property="delegate" destination="HlQ-KZ-Quy" id="2oa-Q7-mmu"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="消息列表" id="DZZ-wz-Vfy"/>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2Tl-Wb-mUM" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                    </view>
+                    <connections>
+                        <outlet property="lblUserName" destination="Qqt-5M-5z0" id="SI6-KS-bzq"/>
+                        <outlet property="tvContent" destination="Wjm-OK-BHA" id="rpw-t3-fYh"/>
+                        <outlet property="tvTitle" destination="9ND-Ex-2TD" id="VxO-0Z-vGA"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="U7o-M2-0I3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1263" y="807"/>
+            <point key="canvasLocation" x="1867" y="830"/>
+        </scene>
+        <!--详细信息-->
+        <scene sceneID="YEH-AX-RnF">
+            <objects>
+                <viewController id="KUS-ke-Q0R" customClass="MsgDetailViewController" customModule="baige_ios" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Ig6-ov-btM"/>
+                        <viewControllerLayoutGuide type="bottom" id="JIa-z9-hLN"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="ynd-Xh-CUg">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LNH-Xu-wD2">
+                                <rect key="frame" x="16" y="88" width="288" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="content" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dxq-9B-e1Z">
+                                <rect key="frame" x="16" y="132" width="288" height="116"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="time" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dKk-13-PC9">
+                                <rect key="frame" x="128" y="281" width="176" height="32"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="L6X-nK-eft">
+                                <rect key="frame" x="11" y="282" width="72" height="30"/>
+                                <state key="normal" title="Sender">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="btnMsgDetailSenderClicked:" destination="KUS-ke-Q0R" eventType="touchUpInside" id="l1Q-Uz-95R"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f23-CH-y7k">
+                                <rect key="frame" x="73" y="328" width="30" height="30"/>
+                                <state key="normal" title="返回">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <segue destination="mGG-1c-qfH" kind="modal" id="77l-E8-aRT"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="详细信息" id="WYy-6g-qZj"/>
+                    <connections>
+                        <outlet property="btnMsgDetailSender" destination="L6X-nK-eft" id="fs1-dH-uE6"/>
+                        <outlet property="lblMsgDetailContent" destination="dxq-9B-e1Z" id="2Ua-AQ-IJf"/>
+                        <outlet property="lblMsgDetailTime" destination="dKk-13-PC9" id="2oe-du-ncP"/>
+                        <outlet property="lblMsgDetailTitle" destination="LNH-Xu-wD2" id="c9y-bL-P2f"/>
+                        <segue destination="kYT-sA-jfQ" kind="modal" identifier="ReplyID" id="bsC-s2-C2X"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="msg-r6-6ng" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2111" y="139"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="gDH-VI-EmJ">
@@ -190,12 +294,45 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
-                        <segue destination="HlQ-KZ-Quy" kind="relationship" relationship="rootViewController" id="hZa-fK-MyP"/>
+                        <segue destination="mGG-1c-qfH" kind="relationship" relationship="rootViewController" id="esN-HU-vHy"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qw1-Co-h1i" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1296" y="139"/>
+            <point key="canvasLocation" x="1278" y="139"/>
+        </scene>
+        <!--消息列表-->
+        <scene sceneID="iVo-Ja-5vL">
+            <objects>
+                <viewController id="mGG-1c-qfH" customClass="MsgListViewController" customModule="baige_ios" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="T1S-2g-sHu"/>
+                        <viewControllerLayoutGuide type="bottom" id="bXZ-Mt-s6z"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="REI-Yg-90P">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="YRo-At-LRS">
+                                <rect key="frame" x="0.0" y="20" width="320" height="568"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="separatorColor" red="0.85098046059999999" green="0.7254902124" blue="0.062745101750000004" alpha="1" colorSpace="deviceRGB"/>
+                                <connections>
+                                    <outlet property="dataSource" destination="mGG-1c-qfH" id="b7A-TQ-fD0"/>
+                                    <outlet property="delegate" destination="mGG-1c-qfH" id="d6E-GP-D75"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="消息列表" id="IWW-CT-bur"/>
+                    <connections>
+                        <segue destination="KUS-ke-Q0R" kind="push" identifier="DetailInfoID" id="kuO-K6-2TT"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="HGJ-6F-n69" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1671" y="139"/>
         </scene>
         <!--Login Success-->
         <scene sceneID="kx4-v0-aqs">
@@ -419,7 +556,7 @@
                         <outlet property="tfRecvPeople" destination="kEq-mI-d0H" id="7T4-Wf-taz"/>
                         <outlet property="tfUname" destination="D3S-Mf-mj6" id="4fz-AO-TQL"/>
                         <outlet property="view" destination="qA2-sm-P0g" id="E2S-EB-CG0"/>
-                        <segue destination="eS4-Cc-hY0" kind="modal" identifier="MSGLISTID" id="JtZ-EL-7sA"/>
+                        <segue destination="eS4-Cc-hY0" kind="modal" identifier="MSGLISTID" id="4cw-iX-5EA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GYT-Qa-90f" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -434,5 +571,7 @@
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
         <segue reference="kKQ-Bo-snz"/>
+        <segue reference="esN-HU-vHy"/>
+        <segue reference="YI1-TT-mgG"/>
     </inferredMetricsTieBreakers>
 </document>

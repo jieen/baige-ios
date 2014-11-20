@@ -14,6 +14,9 @@ var sessionid="0"
 
 var syncType = 1
 
+var msgList = Array<MessageInfo>()
+
+
 
 class HttpUtils{
 //    var ServerUrl = "http://10.0.16.246:8080"
@@ -33,6 +36,15 @@ class HttpUtils{
         var tmpStr = oriString.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
         tmpStr = tmpStr?.stringByReplacingOccurrencesOfString(":", withString: "%3A")
         tmpStr = tmpStr?.stringByReplacingOccurrencesOfString(",", withString: "%2C")
+        return base + tmpStr!
+    }
+    func urlEncodeArray(base:String,oriString:String)->String{
+        println(oriString)
+        var tmpStr = oriString.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+        tmpStr = tmpStr?.stringByReplacingOccurrencesOfString(":", withString: "%3A")
+        tmpStr = tmpStr?.stringByReplacingOccurrencesOfString(",", withString: "%2C")
+        tmpStr = tmpStr?.stringByReplacingOccurrencesOfString("(", withString: "%5B")
+        tmpStr = tmpStr?.stringByReplacingOccurrencesOfString(")", withString: "%5D")
         return base + tmpStr!
     }
     
@@ -118,6 +130,13 @@ class HttpUtils{
         }
         return respose
     }
+    
+    /*
+        0sh25c9gfu7cohic4mmcbii4c3
+        SESSIONID:0sh25c9gfu7cohic4mmcbii4c3
+        SESSIONID:4EE5917A8AEADA23F6FACBEAFE32C347:FG=1
+        SESSIONID:0sh25c9gfu7cohic4mmcbii4c3
+    */
     func checkLogin(user:String,passwd:String)->Bool{
         if(syncType == 1)
         {
@@ -473,32 +492,44 @@ class HttpUtils{
             var data = json.objectForKey("data") as NSDictionary
             var lasted: AnyObject? = data.objectForKey("lasted")
             println("the lasted msg id is: \(lasted)")
-                return true
+            return true
         }
         return false
     }
     //删除短消息
-    func UserDelShortMsg(uid:Int,folder:String,pmids:NSDictionary)->Bool
+    func UserDelShortMsg(uid:Int,folder:String,pmids:NSArray)->Bool
     {
         println("user is \(uid)")
 //        var data = ["errorcode":0,"errormsg":0,"data":["uid":uid,"folder":folder,"pmids":[pmids]]]
         
-        var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uid\":\"\(userid)\",\"folder\":\"\(folder)\",\"pmids\":\"\(pmids)\"}}"
+        var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uid\":\"\(userid)\",\"folder\":\"\(folder)\",\"pmids\":\(pmids)}}"
         var baseStr:String = "content="
-        var rawDataStr = urlEncode(baseStr,oriString: dataIn)
+//        var rawDataStr = urlEncode(baseStr,oriString: dataIn)
+        var rawDataStr = urlEncodeArray(baseStr,oriString: dataIn)
         
+       println(rawDataStr)
+
         var respose = PostJSONData(ServerUrl+"/tipsbar/usermsg/delmsg/",rawData: rawDataStr)
+//        var respose = PostJSONData(ServerUrl+"/tipsbar/usermsg/delmsg/",rawData: baseStr)
+        
+        //test code start
+        var str = NSString(data:respose,encoding:NSUTF8StringEncoding)
+        println(str)
+        //test code end
+        
         var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(respose, options: NSJSONReadingOptions.MutableLeaves, error: nil) as NSDictionary
         
         var errorcode:AnyObject! = json.objectForKey("errorcode")
         var errormsg: AnyObject!  = json.objectForKey("errormsg")
-        if(errorcode as NSNumber == 0){
+        if(errorcode.intValue == 0){
             var data = json.objectForKey("data") as NSDictionary
             var delcount: AnyObject? = data.objectForKey("delcount")
             println("del msg number is \(delcount)")
             return true
+        }else{
+            println("del msg error")
+            return false
         }
-        return false
     }
     
     
@@ -580,8 +611,11 @@ class HttpUtils{
     //获取短消息列表
     func UserGetShortMsgList(uid:Int,page:Int,pagesize:Int,folder:String,filter:String,msglen:Int)->Array<MessageInfo>
     {
-//        println("user is \(uid)")
+        println("user is \(userid)")
 //        var data = ["errorcode":0,"errormsg":0,"data":["uid":uid,"page":page,"pagesize":pagesize,"folder":folder,"filter":filter,"msglen":msglen]]
+        
+        
+        var shortMsgList = Array<MessageInfo>()
     
         var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uid\":\(userid),\"page\":\(page),\"pagesize\":\(pagesize),\"folder\":\"\(folder)\",\"filter\":\"\(filter)\",\"msglen\":\(msglen)}}"
         var baseStr:String = "content="
@@ -599,12 +633,11 @@ class HttpUtils{
         var errorcode:AnyObject! = json.objectForKey("errorcode")
         var errormsg: AnyObject!  = json.objectForKey("errormsg")
 
-        var msgList = Array<MessageInfo>()
-        
         if(errorcode.intValue == 0){
             var data: AnyObject? = json.objectForKey("data")
             if((data?.isEqual(NSNull)) == nil){
-                return msgList
+                println(" no data ")
+                return []
             }
 
             var realData = json.objectForKey("data") as NSDictionary
@@ -615,7 +648,10 @@ class HttpUtils{
             if(count != subData.count){
                 msgCount = ( count > subData.count ) ? count : subData.count
             }
-            
+            if(msgCount <= 0){
+                println("no msg")
+                return []
+            }
             for index in 0...msgCount-1 {
                 
                 println("index: \(index)")
@@ -630,20 +666,20 @@ class HttpUtils{
                 mi.hasnew = subData[index].objectForKey("new")
                 mi.subject = subData[index].objectForKey("subject")
                 mi.dateline = subData[index].objectForKey("dateline")
-                mi.msg = subData[index].objectForKey("msg")
+                mi.msg = subData[index].objectForKey("message")
                 mi.daterange = subData[index].objectForKey("daterange")
                 
-                msgList.append(mi)
-                println("msg info: uid: \(mi.uid),list.uid: \(msgList[index].uid)")
+                shortMsgList.append(mi)
+                println("msg info: uid: \(mi.uid),list.uid: \(shortMsgList[index].uid)")
                 
             }
         }
-        return msgList
+        return shortMsgList
     }
     //根据会话id获取消息id
-    func UserGetShortMsgBySessionId(uid:Int,plid:Int)->Bool
+    func UserGetShortMsgBySessionId(uid:Int,plid:Int)->NSArray
     {
-        println("user is \(uid)")
+        println("user is \(userid)")
 //        var data = ["errorcode":0,"errormsg":0,"data":["uid":uid,"plid":plid]]
         
         var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uid\":\"\(userid)\",\"plid\":\"\(plid)\"}}"
@@ -652,22 +688,62 @@ class HttpUtils{
         
         
         var respose = PostJSONData(ServerUrl+"/tipsbar/usermsg/getpmids/",rawData: rawDataStr)
+        
+        //test code start
+        var str = NSString(data:respose,encoding:NSUTF8StringEncoding)
+        println(str)
+        //test code end
+        
         var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(respose, options: NSJSONReadingOptions.MutableLeaves, error: nil) as NSDictionary
         
         var errorcode:AnyObject! = json.objectForKey("errorcode")
         var errormsg: AnyObject!  = json.objectForKey("errormsg")
-        if(errorcode as NSNumber == 0){
-            var data = json.objectForKey("data") as NSDictionary
-            var plid: AnyObject? = data.objectForKey("plid")
-            println("the msg id is \(plid)")
-            var pmid = data.objectForKey("pmid") as NSArray
+        if(errorcode.intValue == 0){
+            var pmid = json.objectForKey("data") as NSArray
+            if(pmid.count <= 0){
+                println("data is null")
+                return []
+            }
+//            var plid: AnyObject? = data.objectForKey("pmid")
+//            println("the msg id is \(plid)")
+//            var pmid = data.objectForKey("pmid") as NSArray
             println("pm items count is \(pmid.count),the pmid[0] is \(pmid[0])")
-            return true
+            return pmid
         }
-        return false
+        return NSArray()
     }
+    
+    
+    
+    /*
+        {
+            "errorcode":"0",
+            "errormsg":"获取消息内容成功",
+            "data":[
+                    {
+                        "plid":"3",
+                        "authorid":"14",
+                        "pmtype":"1",
+                        "subject":"mu14",
+                        "members":"2",
+                        "dateline":"1416275327",
+                        "pmid":"8",
+                        "message":"141414141414",
+                        "founderuid":"14",
+                        "founddateline":"1416275327",
+                        "touid":"9",
+                        "author":"test2",
+                        "msgfromid":"14",
+                        "msgfrom":"test2",
+                        "msgtoid":"9"
+                    }
+                 ]
+        }
+    
+    
+    */
     //获取短消息内容
-    func UserGetShortMsgContent(uid:Int,pmid:Int)->Bool
+    func UserGetShortMsgContent(uid:Int,pmid:Int)->Array<MessageInfo>
     {
         println("user is \(uid)")
 //        var data = ["errorcode":0,"errormsg":0,"data":["uid":uid,"pmid":pmid]]
@@ -677,32 +753,49 @@ class HttpUtils{
         var rawDataStr = urlEncode(baseStr,oriString: dataIn)
         
         var respose = PostJSONData(ServerUrl+"/tipsbar/usermsg/getmsg/",rawData: rawDataStr)
+        
+        //test code start
+        var str = NSString(data:respose,encoding:NSUTF8StringEncoding)
+        println(str)
+        //test code end
+        
+        
         var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(respose, options: NSJSONReadingOptions.MutableLeaves, error: nil) as NSDictionary
         
         var errorcode:AnyObject! = json.objectForKey("errorcode")
         var errormsg: AnyObject!  = json.objectForKey("errormsg")
-        if(errorcode as NSNumber == 0){
-            var data = json.objectForKey("data") as NSDictionary
-            var plid: AnyObject? = data.objectForKey("plid")
-            println("the msg id is \(plid)")
-            var authorid: AnyObject? = data.objectForKey("authorid")
-            var pmtype: AnyObject? = data.objectForKey("pmtype")
-            var members: AnyObject? = data.objectForKey("members")
-            var pmid: AnyObject? = data.objectForKey("pmid")
-            var founderuid: AnyObject? = data.objectForKey("founderuid")
-            var founddateline: AnyObject? = data.objectForKey("founddateline")
-            var author: AnyObject? = data.objectForKey("author")
-            var msgfromid: AnyObject? = data.objectForKey("msgfromid")
-            var touid: AnyObject? = data.objectForKey("touid")
-            var msgfrom: AnyObject? = data.objectForKey("msgfrom")
-            var msgtoid: AnyObject? = data.objectForKey("msgtoid")
-            var subject: AnyObject? = data.objectForKey("subject")
-            var dateline: AnyObject? = data.objectForKey("dateline")
-            var msg: AnyObject? = data.objectForKey("msg")
-            
-            return true
+        
+        if(errorcode.intValue == 0){
+            var data = json.objectForKey("data") as NSArray
+            if(data.count <= 0){
+                println("Can't found data'")
+                return []
+            }
+            println(data.count)
+            for idx in 0...data.count-1 {
+                var mi = MessageInfo()
+                mi.plid = data[idx].objectForKey("plid")
+//                var plid: AnyObject? = data[idx].objectForKey("plid")
+                println("the msg id is \(mi.plid)")
+                mi.authorid = data[idx].objectForKey("authorid")
+                mi.pmtype = data[idx].objectForKey("pmtype")
+                mi.members = data[idx].objectForKey("members")
+                mi.pmid = data[idx].objectForKey("pmid")
+                mi.founderuid = data[idx].objectForKey("founderuid")
+                mi.founddateline = data[idx].objectForKey("founddateline")
+                mi.author = data[idx].objectForKey("author")
+                mi.msgfromid = data[idx].objectForKey("msgfromid")
+                mi.touid = data[idx].objectForKey("touid")
+                mi.msgfrom = data[idx].objectForKey("msgfrom")
+                mi.msgtoid = data[idx].objectForKey("msgtoid")
+                mi.subject = data[idx].objectForKey("subject")
+                mi.dateline = data[idx].objectForKey("dateline")
+                mi.msg = data[idx].objectForKey("message")
+                msgList.append(mi)
+            }
+            return msgList
         }
-        return false
+        return msgList
     }
     
     func GetData(myUrl:String)

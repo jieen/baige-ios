@@ -13,6 +13,7 @@ class MessageInfo{
     var uid: AnyObject?
     var isnew: AnyObject?
     var pmid: AnyObject?
+    var pmtype: AnyObject?
     var msgfrom: AnyObject?
     var msgfromid: AnyObject?
     var msgtoid: AnyObject?
@@ -20,7 +21,13 @@ class MessageInfo{
     var subject: AnyObject?
     var dateline: AnyObject?
     var msg: AnyObject?
+    var founderuid: AnyObject?
     var daterange: AnyObject?
+    var authorid: AnyObject?
+    var members: AnyObject?
+    var founddateline: AnyObject?
+    var touid: AnyObject?
+    var author: AnyObject?
     
     init(){
         

@@ -28,6 +28,8 @@ class LoginSuccess : UIViewController{
     @IBOutlet weak var tfMsgContent: UITextField!
     @IBOutlet weak var tfMsgTitle: UITextField!
     
+    var delegate:MsgListProtocal?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -127,11 +129,51 @@ class LoginSuccess : UIViewController{
     
     //获取纸条列表
     @IBAction func btnGetMsgListClicked(sender: AnyObject) {
-        var mi = HttpUtils().UserGetShortMsgList(0, page: 1, pagesize: 10, folder: "inbox", filter: "newpm", msglen: 0)
-        if(mi.count > 0){
-            var delegate:MsgListProtocal?
-            println("get msg list success")
-            delegate?.didReceiveMsgList(mi)
+        var listmi = HttpUtils().UserGetShortMsgList(0, page: 1, pagesize: 10, folder: "inbox", filter: "newpm", msglen: 0)
+        if(listmi.isEmpty){
+            println("list is empty")
+            return
+        }
+        if(listmi.count > 0){
+            println("get msg list success count: \(listmi.count)")
+            for index in 0...listmi.count-1
+            {
+                
+//                var mi:MessageInfo? = listmi[index]
+                var plid: AnyObject? = listmi[index].plid
+                println("Cur: \(index) , plid: \(plid)")
+                var plidInt = Int(plid!.integerValue)
+                var pmids = HttpUtils().UserGetShortMsgBySessionId(0, plid: plidInt)
+                if(pmids.count <= 0){
+                    println("no pmids found")
+                    continue
+                }
+                for i in 0...pmids.count-1 {
+                    /*
+                    /Users/test/workspace/baige-ios/baige-ios/baige-ios/baige-ios/LoginSuccess.swift:144:48: 'Int32' is not convertible to 'Int'
+                    
+                    */
+                    
+//                    var pmididx:Int = Int(pmids[i] as NSNumber)
+                    println("Cur \(i) pmid : \(pmids[i])")
+                    /*
+                    /Users/test/workspace/baige-ios/baige-ios/baige-ios/baige-ios/LoginSuccess.swift:151:33: Cannot invoke 'init' with an argument list of type '($T4, pmid: @lvalue Int)'
+                    
+                    */
+//                    var pmidInt = pmids[i] as? Int
+                    var pmidInt = Int(pmids[i].integerValue)
+                    
+                    println("Cur \(i) pmidInt : \(pmidInt)")
+                    
+                    HttpUtils().UserGetShortMsgContent(0, pmid: pmidInt)
+                }
+            }
+            
+            for num in 0...msgList.count-1 {
+                println("subject: \(msgList[num].subject) msg: \(msgList[num].msg)")
+            }
+            
+            delegate?.didReceiveMsgList(listmi)
             self.performSegueWithIdentifier("MSGLISTID", sender: self)
         }else
         {
@@ -150,6 +192,8 @@ class LoginSuccess : UIViewController{
             println("No New Message")
         }
     }
+    
+    //发送纸条
     @IBAction func btnSendMsgClicked(sender: AnyObject) {
         if(tfMsgToUser.text.isEmpty || tfMsgContent.text.isEmpty || tfMsgTitle.text.isEmpty){
             println("发送的用户和内容不能为空")
