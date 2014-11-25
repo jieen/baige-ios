@@ -57,6 +57,9 @@ class MsgListViewController:UIViewController,MsgListProtocal{
         println("cellForRowAtIndexPath ")
         var nib = UINib(nibName:"MsgListItem",bundle:nil)
         tableView.registerNib(nib,forCellReuseIdentifier:"MsgListItemId")
+        
+        println("cellForRowAtIndexPath 22")
+        
         var cell:MsgListItemCell = tableView.dequeueReusableCellWithIdentifier("MsgListItemId", forIndexPath: indexPath) as MsgListItemCell
 //        cell.setMsgListItemData("title",people: "popo",time: "2014-12-30")
         println(indexPath.row)
@@ -64,13 +67,16 @@ class MsgListViewController:UIViewController,MsgListProtocal{
         /*
             /Users/test/workspace/baige-ios/baige-ios/baige-ios/baige-ios/MsgListViewController.swift:47:52: 'Slice<MessageInfo>' does not have a member named 'msgfrom'
         */
-        
+        println(msgList[0].msg)
         var idx:Int = indexPath.row
-        var subject = msgList[idx].subject as String
-        var fromUser = msgList[idx].msgfrom as String
+        var subject = msgList[idx].msg as String
+        println("get data ok 1")
+        var fromUser = msgList[idx].authorname as String
+        println("get data ok 2")
         var date = msgList[idx].dateline as String
-        
-        cell.setMsgListItemData(subject, people: fromUser, time: date)
+        println("get data ok 3")
+        var dateStr = date.dateStringFromTimestamp(date)
+        cell.setMsgListItemData(subject, people: fromUser, time: dateStr)
         println("cellForRowAtIndexPath out")
         return cell
     }

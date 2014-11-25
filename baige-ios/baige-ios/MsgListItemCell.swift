@@ -37,7 +37,7 @@ class MsgListItemCell:UITableViewCell{
         Cannot convert the expression's type '(IntegerLiteralConvertible, StringLiteralConvertible, $T7)' to type 'IntegerLiteralConvertible'
     */
     @IBAction func btnDelClicked(sender: AnyObject) {
-        println("del")
+        println("del ,select: \(selectId)")
         var pmids = msgList[selectId].pmid as Int
         println("del pmids:\(pmids)")
         HttpUtils().UserDelShortMsg(0,folder: "inbox",pmids: [pmids])

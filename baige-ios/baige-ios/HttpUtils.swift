@@ -10,15 +10,16 @@ import Foundation
 import UiKit
 
 var userid="0"
-var sessionid="0"
+var sessionid=""
 
 var syncType = 1
 
 var msgList = Array<MessageInfo>()
-
+var ServerUrl = "http://baigeapp.duapp.com"
 
 
 class HttpUtils{
+    
 //    var ServerUrl = "http://10.0.16.246:8080"
     var ServerUrl = "http://baigeapp.duapp.com"
 //    var ServerUrl = "http://10.0.17.189"
@@ -136,6 +137,23 @@ class HttpUtils{
         SESSIONID:0sh25c9gfu7cohic4mmcbii4c3
         SESSIONID:4EE5917A8AEADA23F6FACBEAFE32C347:FG=1
         SESSIONID:0sh25c9gfu7cohic4mmcbii4c3
+    
+    
+    
+    Response: 'Optional(<?xml version="1.0" encoding="iso-8859-1"?>
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+    <title>503 - Service Not Available</title>
+    </head>
+    <body>
+    <h1>503 - Service Not Available</h1>
+    </body>
+    </html>
+    )'
+
+    
     */
     func checkLogin(user:String,passwd:String)->Bool{
         if(syncType == 1)
@@ -379,14 +397,22 @@ class HttpUtils{
         {
             println("GetUserInfo in")
             var respose = PostJSONData(myUrl,rawData: rawDataStr)
+            
+            //test code start
+            var str = NSString(data:respose,encoding:NSUTF8StringEncoding)
+            println(str)
+            //test code end
+            
+            
             var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(respose, options: NSJSONReadingOptions.MutableLeaves, error: nil) as NSDictionary
             
-            println(json)
+            println("start:   \(json)  end")
             var errorcode:AnyObject! = json.objectForKey("errorcode")
             println("errorcode: \(errorcode)")
             var errormsg: AnyObject!  = json.objectForKey("errormsg")
             if(errorcode.intValue == 0){
-//                var user = UserInfo()
+                println("save for user")
+                var user = UserInfo()
                 var data = json.objectForKey("data") as NSDictionary
                 user.uid = data.objectForKey("uid") as? String
                 user.uname = data.objectForKey("uname") as? String
@@ -451,12 +477,19 @@ class HttpUtils{
     //是否有小纸条
     func UserHasNewShortMsg(uid:Int)->Bool
     {
-        println("user is \(uid)")
+        println("user is \(userid)")
 //        var data = ["errorcode":0,"errormsg":0,"data":["uid":uid]]
         var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uid\":\"\(userid)\"}}"
         var baseStr:String = "content="
         var rawDataStr = urlEncode(baseStr,oriString: dataIn)
         var respose = PostJSONData(ServerUrl+"/tipsbar/usermsg/checknew/",rawData: rawDataStr)
+        
+        
+        //test code start
+        var str = NSString(data:respose,encoding:NSUTF8StringEncoding)
+        println(str)
+        //test code end
+        
         var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(respose, options: NSJSONReadingOptions.MutableContainers, error: nil) as NSDictionary
         
         var errorcode:AnyObject! = json.objectForKey("errorcode")
@@ -464,7 +497,9 @@ class HttpUtils{
         if(errorcode.intValue == 0){
             var data = json.objectForKey("data") as NSDictionary
             var hasnew = data.objectForKey("hasnew") as Int
-            if(hasnew == 1){
+            
+            println(hasnew)
+            if(hasnew > 0){
                 return true
             }
             else{
@@ -473,6 +508,60 @@ class HttpUtils{
         }
         return false
     }
+    
+    func UserGetMsgList()->Bool{
+        println("Get Message List or Reflesh Message")
+        var listmi = HttpUtils().UserGetShortMsgList(0, page: 1, pagesize: 10, folder: "inbox", filter: "newpm", msglen: 0)
+        if(listmi.isEmpty){
+            println("list is empty")
+            return false
+        }
+        if(listmi.count > 0){
+            msgList = []
+            println("get msg list success count: \(listmi.count)")
+            for index in 0...listmi.count-1
+            {
+                
+                //                var mi:MessageInfo? = listmi[index]
+                var plid: AnyObject? = listmi[index].plid
+                println("Cur: \(index) , plid: \(plid)")
+                var plidInt = Int(plid!.integerValue)
+                var pmids = HttpUtils().UserGetShortMsgBySessionId(0, plid: plidInt)
+                if(pmids.count <= 0){
+                    println("no pmids found")
+                    continue
+                }
+                for i in 0...pmids.count-1 {
+                    //                    var pmididx:Int = Int(pmids[i] as NSNumber)
+                    println("Cur \(i) pmid : \(pmids[i])")
+                    //                    var pmidInt = pmids[i] as? Int
+                    var pmidInt = Int(pmids[i].integerValue)
+//                    var plidInt = Int(plid!.integerValue)
+                    
+                    println("Cur \(i) pmidInt : \(pmidInt)")
+                    
+                    HttpUtils().UserGetShortMsgContent(0, pmid: pmidInt,plid:plidInt)
+                }
+            }
+            println("get msgList")
+            
+            if(msgList.count <= 0)
+            {
+                println("no msgList Found")
+                return false
+            }
+            
+            for num in 0...msgList.count-1 {
+                println("msg: \(msgList[num].msg)")
+            }
+            return true
+        }else
+        {
+            println("No msg or get list error")
+            return false
+        }
+    }
+    
     //发送短消息
     func UserSendNewShortMsg(fromuid:String,touid:String,subject:String,msg:String,replypid:Int)->Bool
     {
@@ -484,6 +573,13 @@ class HttpUtils{
         var rawDataStr = urlEncode(baseStr,oriString: dataIn)
         
         var respose = PostJSONData(ServerUrl+"/tipsbar/usermsg/sendmsg/",rawData: rawDataStr)
+        
+        
+        //test code start
+        var str = NSString(data:respose,encoding:NSUTF8StringEncoding)
+        println(str)
+        //test code end
+        
         var json:NSDictionary = NSJSONSerialization.JSONObjectWithData(respose, options: NSJSONReadingOptions.MutableLeaves, error: nil) as NSDictionary
         
         var errorcode:AnyObject! = json.objectForKey("errorcode")
@@ -608,7 +704,11 @@ class HttpUtils{
     }
     }
     */
-    //获取短消息列表
+    /*
+        获取短消息列表
+    */
+
+
     func UserGetShortMsgList(uid:Int,page:Int,pagesize:Int,folder:String,filter:String,msglen:Int)->Array<MessageInfo>
     {
         println("user is \(userid)")
@@ -742,13 +842,41 @@ class HttpUtils{
     
     
     */
-    //获取短消息内容
-    func UserGetShortMsgContent(uid:Int,pmid:Int)->Array<MessageInfo>
+    /*
+            [
+              {
+                "plid":"6",
+                "authorid":"8",
+                "pmtype":"1",
+                "subject":"",
+                "members":"2",
+                "dateline":"1416534106",
+                "pmid":"19",
+                "message":"",
+                "founderuid":"8",
+                "founddateline":"1416534106",
+                "touid":"9",
+                "author":null,
+                "msgfromid":"8",
+                "msgfrom":null,
+                "msgtoid":"9"
+             }
+            ]
+            {"errorcode":"0","errormsg":"获取消息内容成功",
+            "data":[{"plid":"6","authorid":"8","pmtype":"1","subject":"","members":"2","dateline":"1416534106","pmid":"19","message":"","founderuid":"8","founddateline":"1416534106","touid":"9","author":"啧啧啧","msgfromid":"8","msgfrom":"啧啧啧","msgtoid":"9"}]}
+    
+    */
+    
+    /*
+        获取短消息内容
+        新增参数plid 2014-11-25
+    */
+    func UserGetShortMsgContent(uid:Int,pmid:Int,plid:Int)->Array<MessageInfo>
     {
-        println("user is \(uid)")
+        println("UserGetShortMsgContent user is \(userid)")
 //        var data = ["errorcode":0,"errormsg":0,"data":["uid":uid,"pmid":pmid]]
         
-        var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uid\":\"\(userid)\",\"pmid\":\"\(pmid)\"}}"
+        var dataIn = "{\"errorcode\":0,\"errormsg\":0,\"data\":{\"uid\":\"\(userid)\",\"pmid\":\"\(pmid)\",\"plid\":\"\(plid)\"}}"
         var baseStr:String = "content="
         var rawDataStr = urlEncode(baseStr,oriString: dataIn)
         
@@ -766,36 +894,37 @@ class HttpUtils{
         var errormsg: AnyObject!  = json.objectForKey("errormsg")
         
         if(errorcode.intValue == 0){
-            var data = json.objectForKey("data") as NSArray
+//            var data = json.objectForKey("data") as NSArray
+            var data = json.objectForKey("data") as NSDictionary
             if(data.count <= 0){
                 println("Can't found data'")
                 return []
             }
             println(data.count)
-            for idx in 0...data.count-1 {
+//            for idx in 0...data.count-1 {
                 var mi = MessageInfo()
-                mi.plid = data[idx].objectForKey("plid")
-//                var plid: AnyObject? = data[idx].objectForKey("plid")
-                println("the msg id is \(mi.plid)")
-                mi.authorid = data[idx].objectForKey("authorid")
-                mi.pmtype = data[idx].objectForKey("pmtype")
-                mi.members = data[idx].objectForKey("members")
-                mi.pmid = data[idx].objectForKey("pmid")
-                mi.founderuid = data[idx].objectForKey("founderuid")
-                mi.founddateline = data[idx].objectForKey("founddateline")
-                mi.author = data[idx].objectForKey("author")
-                mi.msgfromid = data[idx].objectForKey("msgfromid")
-                mi.touid = data[idx].objectForKey("touid")
-                mi.msgfrom = data[idx].objectForKey("msgfrom")
-                mi.msgtoid = data[idx].objectForKey("msgtoid")
-                mi.subject = data[idx].objectForKey("subject")
-                mi.dateline = data[idx].objectForKey("dateline")
-                mi.msg = data[idx].objectForKey("message")
+                mi.plid = plid
+                mi.pmid = pmid
+                mi.touid = userid
+                mi.authorid = data.objectForKey("authorid")
+//                mi.pmtype = data[idx].objectForKey("pmtype")
+//                mi.members = data[idx].objectForKey("members")
+//                mi.pmid = data[idx].objectForKey("pmid")
+//                mi.founderuid = data[idx].objectForKey("founderuid")
+//                mi.founddateline = data[idx].objectForKey("founddateline")
+                mi.authorname = data.objectForKey("authorname")
+//                mi.msgfromid = data[idx].objectForKey("msgfromid")
+//                mi.touid = data[idx].objectForKey("touid")
+//                mi.msgfrom = data[idx].objectForKey("msgfrom")
+//                mi.msgtoid = data[idx].objectForKey("msgtoid")
+//                mi.subject = data[idx].objectForKey("subject")
+                mi.dateline = data.objectForKey("dateline")
+                mi.msg = data.objectForKey("message")
                 msgList.append(mi)
-            }
+//            }
             return msgList
         }
-        return msgList
+        return []
     }
     
     func GetData(myUrl:String)
@@ -1040,5 +1169,78 @@ class HttpUtils{
         
        task.resume()
     }
+    
+    
+//    //post 请求(dic里包含NSData)需要设置 contentType的类型
+//    func uploadimageFromPostUrl(url:NSString,dic:NSDictionary?,picdata:NSData,name:String!, completionHandler:((response:NSHTTPURLResponse?,data:NSData?,error:NSError?)->Void)){
+//        let newUrl=NSURL(string:url)
+//        let request=NSMutableURLRequest(URL:newUrl!)
+//        request.timeoutInterval=10.0
+//        request.HTTPMethod="POST"
+//        
+//        let start=NSString(format:"--\(SYMBOL)")
+//        let end=NSString(format:"--\(SYMBOL)--")
+//        var bodyString=NSMutableString()
+//        
+//        var param=NSMutableArray()
+//        let conetnt="content"
+//        if dic != nil {
+//            for (key,value) in dic!{
+//                let t = String(format:"\(key)")
+//                let v = String(format:"\(value)")
+//                if t == conetnt {
+//                    var s=String(format:"\(key)=\(value)")
+//                    param.addObject(s)
+//                    
+//                    bodyString.appendFormat("\(start)\r\n")
+//                    bodyString.appendFormat("Content-Disposition: form-data; name=\"\(t)\"\r\n\r\n")
+//                    
+//                    bodyString.appendFormat("\(value)\r\n\r\n")
+//                }else{
+//                    request.addValue(v, forHTTPHeaderField:t)
+//                }
+//            }
+//        }
+//        
+//        //添加分界线，换行
+//        bodyString.appendFormat("\(start)\r\n")
+//        
+//        //声明pic字段，文件名为boris.png
+//        bodyString.appendFormat("Content-Disposition: form-data; name=\"pictures[]\"; filename=\"\(name)\"\r\n")
+//        var am = name.substring(".", end: nil).indexAt(1)
+//        //声明上传文件的格式
+//        bodyString.appendFormat("Content-Type: image/\(am)\r\n\r\n")
+//        
+//        //声明结束符：--AaB03x--
+//        var endStr=NSString(format:"\r\n\(end)")
+//        
+//        
+//        
+//        //声明myRequestData，用来放入http body
+//        var myRequestData=NSMutableData()
+//        //将body字符串转化为UTF8格式的二进制
+//        myRequestData.appendData(bodyString.dataUsingEncoding(NSUTF8StringEncoding)!)
+//        
+//        
+//        //将image的data加入
+//        myRequestData.appendData(picdata);
+//        //加入结束符--AaB03x--
+//        myRequestData.appendData(endStr.dataUsingEncoding(NSUTF8StringEncoding)!);
+//        
+//        
+//        
+//        
+//        //设置HTTPHeader中Content-Type的值
+//        var  content=NSString(format:"multipart/form-data; boundary=\(SYMBOL)")
+//        //设置HTTPHeader
+//        //[request setValue:content forHTTPHeaderField:@"Content-Type"];
+//        request.addValue(content, forHTTPHeaderField:"Content-Type")
+//        //设置Content-Length
+//        request.addValue(String(myRequestData.length), forHTTPHeaderField:"Content-Length")
+//        
+//        request.HTTPBody=myRequestData
+//        connection=NSURLConnection(request: request, delegate:self)
+//        self.completeBlock=completionHandler
+//    }
     
 }

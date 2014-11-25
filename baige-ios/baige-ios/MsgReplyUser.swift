@@ -18,17 +18,18 @@ class MsgReplyUser: UIViewController {
     
     override func viewDidLoad(){
         super.viewDidLoad()
-        lblUserName.text = msgList[selectId].msgfrom as? String
+        lblUserName.text = msgList[selectId].authorname as? String
     }
     
     @IBAction func btnReply(sender: AnyObject) {
         println("reply")
-        if(tvTitle.text.isEmpty || tvContent.text.isEmpty){
+        if(tvContent.text.isEmpty){
             println("发送内容不能为空")
             return
         }
-        var toUser = msgList[selectId].msgfromid as String
-        println(toUser)
-        HttpUtils().UserSendNewShortMsg(userid, touid: toUser, subject: tvTitle.text, msg: tvContent.text, replypid: 0)
+        var toUser = msgList[selectId].authorid as String
+        var replyid = Int(msgList[selectId].pmid!.integerValue)
+        println("toUser:\(toUser),pmid:\(replyid)")
+        HttpUtils().UserSendNewShortMsg(userid, touid: toUser, subject: "", msg: tvContent.text, replypid: replyid)
     }
 }

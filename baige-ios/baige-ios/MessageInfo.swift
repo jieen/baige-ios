@@ -27,7 +27,7 @@ class MessageInfo{
     var members: AnyObject?
     var founddateline: AnyObject?
     var touid: AnyObject?
-    var author: AnyObject?
+    var authorname: AnyObject?
     
     init(){
         
